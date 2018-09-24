@@ -1,7 +1,7 @@
 from charge import Charge
 from climate import Climate
 from controls import Controls
-from vehicle_state import VehicleState
+from state import State
 
 class Vehicles:
     def __init__(self, api_client):
@@ -18,14 +18,18 @@ class Vehicle:
         self.charge = Charge(self._api_client, vehicle['id'])
         self.climate = Climate(self._api_client, vehicle['id'])
         self.controls = Controls(self._api_client, vehicle['id'])
-        self.vehicle_state = VehicleState(self._api_client, vehicle['id'])
+        self.state = State(self._api_client, vehicle['id'])
 
     @property
     def id(self):
         return self._vehicle['id']
 
     @property
-    def name(self):
-        return self._vehicle['name']
+    def display_name(self):
+        return self._vehicle['display_name']
+
+    @property
+    def vin(self):
+        return self._vehicle['vin']
 
         

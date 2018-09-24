@@ -65,7 +65,7 @@ class ApiClient:
 
     def _get_headers(self):
         return {
-            'Authorization': f'Bearer {self._token['access_token']}'
+            'Authorization': f'Bearer {self._token["access_token"]}'
         }
 
     def get(self, endpoint):

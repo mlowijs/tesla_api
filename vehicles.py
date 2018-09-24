@@ -20,4 +20,12 @@ class Vehicle:
         self.controls = Controls(self._api_client, vehicle['id'])
         self.vehicle_state = VehicleState(self._api_client, vehicle['id'])
 
+    @property
+    def id(self):
+        return self._vehicle['id']
+
+    @property
+    def name(self):
+        return self._vehicle['name']
+
         

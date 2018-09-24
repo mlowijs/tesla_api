@@ -56,16 +56,16 @@ class ApiClient:
         if not self._token:
             self._token = self._get_new_token()
 
-        expiry_time = timedelta(seconds=self._token["expires_in"])
-        expiration_date = datetime.fromtimestamp(self._token["created_at"]) + expiry_time
+        expiry_time = timedelta(seconds=self._token['expires_in'])
+        expiration_date = datetime.fromtimestamp(self._token['created_at']) + expiry_time
 
         if expiration_date <= datetime.utcnow():
-            self._token = self._refresh_token(self._token["refresh_token"])
+            self._token = self._refresh_token(self._token['refresh_token'])
             print(self._token)
 
     def _get_headers(self):
         return {
-            'Authorization': f'Bearer {self._token["access_token"]}'
+            'Authorization': f'Bearer {self._token['access_token']}'
         }
 
     def get(self, endpoint):

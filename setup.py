@@ -1,8 +1,21 @@
 from setuptools import setup, find_packages
 
+with open("README.md", "r") as fh:
+    long_description = fh.read()
+
 setup(
-    name='Tesla API',
-    version='0.0.1',
+    name="tesla_api",
+    version="1.0",
+    author="M. Lowijs",
+    author_email="mlowijs@gmail.com",
+    description="API client for Tesla",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
+    url="https://github.com/mlowijs/tesla_api",
     packages=find_packages(),
-    install_requires=['requests']
+    classifiers=[
+        "Programming Language :: Python :: 3",
+        "License :: OSI Approved :: MIT License",
+        "Operating System :: OS Independent",
+    ],
 )

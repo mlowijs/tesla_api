@@ -14,3 +14,6 @@ class Controls:
         
     def close_sunroof(self):
         return self._set_sunroof_state(STATE_CLOSE)
+
+    def flash_lights(self):
+        return self._api_client.post(f'vehicles/{self._vehicle_id}/command/flash_lights')

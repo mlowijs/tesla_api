@@ -1,6 +1,6 @@
-class Vehicle:
+class Vehicles:
     def __init__(self, api_client):
         self._api_client = api_client
 
-    def list_vehicles(self):
+    def list(self):
         return self._api_client.get('vehicles')

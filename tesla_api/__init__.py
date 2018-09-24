@@ -12,10 +12,9 @@ OAUTH_CLIENT_SECRET = 'c7257eb71a564034f9419ee651c7d0e5f7aa6bfbd18bafb5c5c033b09
 
 class TeslaApiClient:
     def __init__(self, email, password):
-        self._token = None
-
         self._email = email
         self._password = password
+        self._token = None
 
         self._vehicles = Vehicles(self)
 
@@ -52,7 +51,7 @@ class TeslaApiClient:
 
         return response_json
 
-    def _validate_token(self):
+    def authenticate(self):
         if not self._token:
             self._token = self._get_new_token()
 
@@ -69,7 +68,7 @@ class TeslaApiClient:
         }
 
     def get(self, endpoint):
-        self._validate_token()
+        self.authenticate()
 
         response = requests.get(f'{API_URL}/{endpoint}', headers=self._get_headers())
         response_json = response.json()
@@ -80,7 +79,7 @@ class TeslaApiClient:
         return response_json['response']
 
     def post(self, endpoint, data = {}):
-        self._validate_token()
+        self.authenticate()
 
         response = requests.post(f'{API_URL}/{endpoint}', headers=self._get_headers(), data=data)
         response_json = response.json()

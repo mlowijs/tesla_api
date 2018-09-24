@@ -60,18 +60,18 @@ class ApiClient:
         expiration_date = datetime.fromtimestamp(self._token["created_at"]) + expiry_time
 
         if expiration_date <= datetime.utcnow():
-            self._token = self._refresh_token(self._token["refresh_token"])        
+            self._token = self._refresh_token(self._token["refresh_token"])
+            print(self._token)
 
     def _get_headers(self):
-        self._validate_token()
-
         return {
             'Authorization': f'Bearer {self._token["access_token"]}'
         }
 
     def get(self, endpoint):
+        self._validate_token()
+
         response = requests.get(f'{API_URL}/{endpoint}', headers=self._get_headers())
-        
         return response.json()['response']
 
     def post(self, endpoint):

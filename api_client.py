@@ -1,10 +1,7 @@
 from datetime import datetime, timedelta
 import requests
 
-from charge import Charge
-from climate import Climate
 from vehicles import Vehicles
-from vehicle_state import VehicleState
 
 TESLA_API_BASE_URL = 'https://owner-api.teslamotors.com/'
 TOKEN_URL = TESLA_API_BASE_URL + 'oauth/token'
@@ -20,10 +17,7 @@ class ApiClient:
         self._email = email
         self._password = password
 
-        self.charge = Charge(self)
-        self.climate = Climate(self)
-        self.vehicles = Vehicles(self)
-        self.vehicle_state = VehicleState(self)
+        self.vehicles = Vehicles(self)        
 
     def _get_new_token(self):
         request_data = {
@@ -85,10 +79,10 @@ class ApiClient:
 
         return response_json['response']
 
-    def post(self, endpoint):
+    def post(self, endpoint, data = {}):
         self._validate_token()
 
-        response = requests.post(f'{API_URL}/{endpoint}', headers=self._get_headers())
+        response = requests.post(f'{API_URL}/{endpoint}', headers=self._get_headers(), data=data)
         response_json = response.json()
 
         if 'error' in response_json:

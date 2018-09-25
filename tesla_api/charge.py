@@ -4,18 +4,21 @@ class Charge:
         self._vehicle_id = vehicle_id
 
     def get_charge_state(self):
-        return self._api_client.get(f'vehicles/{self._vehicle_id}/data_request/charge_state')
+        return self._api_client.get('vehicles/{}/data_request/charge_state'.format(self._vehicle_id))
 
     def start_charging(self):
-        return self._api_client.post(f'vehicles/{self._vehicle_id}/command/charge_start')
+        return self._api_client.post('vehicles/{}/command/charge_start'.format(self._vehicle_id))
 
     def stop_charging(self):
-        return self._api_client.post(f'vehicles/{self._vehicle_id}/command/charge_stop')
+        return self._api_client.post('vehicles/{}/command/charge_stop'.format(self._vehicle_id))
 
     def set_charge_limit(self, percentage):
         percentage = round(percentage)
 
         if percentage < 50 or percentage > 100:
-            raise ValueError(f'Percentage should be between 50 and 100')
+            raise ValueError('Percentage should be between 50 and 100')
 
-        return self._api_client.post(f'vehicles/{self._vehicle_id}/command/set_charge_limit', {'percent': percentage})
+        return self._api_client.post(
+            'vehicles/{}/command/set_charge_limit'.format(self._vehicle_id),
+            {'percent': percentage}
+        )

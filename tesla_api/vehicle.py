@@ -12,19 +12,19 @@ class Vehicle:
         self._controls = Controls(self._api_client, vehicle['id'])
 
     def is_mobile_access_enabled(self):
-        return self._api_client.get(f'vehicles/{self.id}/mobile_enabled')
+        return self._api_client.get('vehicles/{}/mobile_enabled'.format(self.id))
 
     def get_state(self):
-        return self._api_client.get(f'vehicles/{self.id}/data_request/vehicle_state')
+        return self._api_client.get('vehicles/{}/data_request/vehicle_state'.format(self.id))
 
     def get_drive_state(self):
-        return self._api_client.get(f'vehicles/{self.id}/data_request/drive_state')
+        return self._api_client.get('vehicles/{}/data_request/drive_state'.format(self.id))
 
     def get_gui_settings(self):
-        return self._api_client.get(f'vehicles/{self.id}/data_request/gui_settings')
+        return self._api_client.get('vehicles/{}/data_request/gui_settings'.format(self.id))
 
     def wake_up(self):
-        return self._api_client.post(f'vehicles/{self.id}/wake_up')
+        return self._api_client.post('vehicles/{}/wake_up'.format(self.id))
 
     @property
     def id(self):

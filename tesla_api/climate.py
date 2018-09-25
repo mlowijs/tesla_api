@@ -4,14 +4,17 @@ class Climate:
         self._vehicle_id = vehicle_id
 
     def get_climate_state(self):
-        return self._api_client.get(f'vehicles/{self._vehicle_id}/data_request/climate_state')
+        return self._api_client.get('vehicles/{}/data_request/climate_state'.format(self._vehicle_id))
 
     def start_climate(self):
-        return self._api_client.post(f'vehicles/{self._vehicle_id}/command/auto_conditioning_start')
+        return self._api_client.post('vehicles/{}/command/auto_conditioning_start'.format(self._vehicle_id))
 
     def stop_climate(self):
-        return self._api_client.post(f'vehicles/{self._vehicle_id}/command/auto_conditioning_stop')
+        return self._api_client.post('vehicles/{}/command/auto_conditioning_stop'.format(self._vehicle_id))
 
     def set_temperature(self, driver_temperature, passenger_temperature = None):
-        passenger_temperature = driver_temperature if passenger_temperature is None else passenger_temperature
-        return self._api_client.post(f'vehicles/{self._vehicle_id}/command/set_temps', {'driver_temp': driver_temperature, 'passenger_temp': passenger_temperature})
+        return self._api_client.post(
+            'vehicles/{}/command/set_temps'.format(self._vehicle_id),
+            {'driver_temp': driver_temperature,
+             'passenger_temp': passenger_temperature or driver_temperature}
+        )

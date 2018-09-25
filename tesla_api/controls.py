@@ -7,7 +7,10 @@ class Controls:
         self._vehicle_id = vehicle_id
 
     def _set_sunroof_state(self, state):
-        return self._api_client.post(f'vehicles/{self._vehicle_id}/command/sun_roof_control', {'state': state})
+        return self._api_client.post(
+            'vehicles/{}/command/sun_roof_control'.format(self._vehicle_id),
+            {'state': state}
+        )
 
     def vent_sunroof(self):
         return self._set_sunroof_state(STATE_VENT)
@@ -16,10 +19,10 @@ class Controls:
         return self._set_sunroof_state(STATE_CLOSE)
 
     def flash_lights(self):
-        return self._api_client.post(f'vehicles/{self._vehicle_id}/command/flash_lights')
+        return self._api_client.post('vehicles/{}/command/flash_lights'.format(self._vehicle_id))
 
     def honk_horn(self):
-        return self._api_client.post(f'vehicles/{self._vehicle_id}/command/honk_horn')
+        return self._api_client.post('vehicles/{}/command/honk_horn'.format(self._vehicle_id))
 
     def open_charge_port(self):
-        return self._api_client.post(f'vehicles/{self._vehicle_id}/command/charge_port_door_open')
+        return self._api_client.post('vehicles/{}/command/charge_port_door_open'.format(self._vehicle_id))

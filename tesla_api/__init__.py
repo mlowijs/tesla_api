@@ -62,13 +62,13 @@ class TeslaApiClient:
 
     def _get_headers(self):
         return {
-            'Authorization': f'Bearer {self._token["access_token"]}'
+            'Authorization': 'Bearer {}'.format(self._token["access_token"])
         }
 
     def get(self, endpoint):
         self.authenticate()
 
-        response = requests.get(f'{API_URL}/{endpoint}', headers=self._get_headers())
+        response = requests.get('{}/{}'.format(API_URL, endpoint), headers=self._get_headers())
         response_json = response.json()
 
         if 'error' in response_json:
@@ -79,7 +79,7 @@ class TeslaApiClient:
     def post(self, endpoint, data = {}):
         self.authenticate()
 
-        response = requests.post(f'{API_URL}/{endpoint}', headers=self._get_headers(), data=data)
+        response = requests.post('{}/{}'.format(API_URL, endpoint), headers=self._get_headers(), data=data)
         response_json = response.json()
 
         if 'error' in response_json:
@@ -92,8 +92,8 @@ class TeslaApiClient:
 
 class AuthenticationError(Exception):
     def __init__(self, error):
-        super().__init__(f'Authentication to the Tesla API failed: {error}')
+        super().__init__('Authentication to the Tesla API failed: {}'.format(error))
 
 class ApiError(Exception):
     def __init__(self, error):
-        super().__init__(f'Tesla API call failed: {error}')
+        super().__init__('Tesla API call failed: {}'.format(error))

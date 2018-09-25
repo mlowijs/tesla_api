@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 import requests
 
-from .vehicles import Vehicles
+from .vehicle import Vehicle
 
 TESLA_API_BASE_URL = 'https://owner-api.teslamotors.com/'
 TOKEN_URL = TESLA_API_BASE_URL + 'oauth/token'
@@ -15,8 +15,6 @@ class TeslaApiClient:
         self._email = email
         self._password = password
         self._token = None
-
-        self._vehicles = Vehicles(self)
 
     def _get_new_token(self):
         request_data = {
@@ -89,9 +87,8 @@ class TeslaApiClient:
 
         return response_json['response']
 
-    @property
-    def vehicles(self):
-        return self._vehicles
+    def list_vehicles(self):
+        return [Vehicle(self, vehicle) for vehicle in self.get('vehicles')]
 
 class AuthenticationError(Exception):
     def __init__(self, error):

@@ -11,3 +11,11 @@ class Charge:
 
     def stop_charging(self):
         return self._api_client.post(f'vehicles/{self._vehicle_id}/command/charge_stop')
+
+    def set_charge_limit(self, percentage):
+        percentage = round(percentage)
+
+        if percentage < 50 or percentage > 100:
+            raise ValueError(f'Percentage should be between 50 and 100')
+
+        return self._api_client.post(f'vehicles/{self._vehicle_id}/command/set_charge_limit', {'percent': percentage})

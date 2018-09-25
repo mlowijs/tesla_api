@@ -1,14 +1,6 @@
 from .charge import Charge
 from .climate import Climate
-from .controls import Controls
-from .state import State
-
-class Vehicles:
-    def __init__(self, api_client):
-        self._api_client = api_client
-
-    def list(self):
-        return [Vehicle(self._api_client, vehicle) for vehicle in self._api_client.get('vehicles')]
+from .controls import Controls    
 
 class Vehicle:
     def __init__(self, api_client, vehicle):
@@ -18,7 +10,21 @@ class Vehicle:
         self._charge = Charge(self._api_client, vehicle['id'])
         self._climate = Climate(self._api_client, vehicle['id'])
         self._controls = Controls(self._api_client, vehicle['id'])
-        self._state = State(self._api_client, vehicle['id'])
+
+    def is_mobile_access_enabled(self):
+        return self._api_client.get(f'vehicles/{self.id}/mobile_enabled')
+
+    def get_state(self):
+        return self._api_client.get(f'vehicles/{self.id}/data_request/vehicle_state')
+
+    def get_drive_state(self):
+        return self._api_client.get(f'vehicles/{self.id}/data_request/drive_state')
+
+    def get_gui_settings(self):
+        return self._api_client.get(f'vehicles/{self.id}/data_request/gui_settings')
+
+    def wake_up(self):
+        return self._api_client.post(f'vehicles/{self.id}/wake_up')
 
     @property
     def id(self):

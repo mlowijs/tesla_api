@@ -17,3 +17,9 @@ class Controls:
 
     def flash_lights(self):
         return self._api_client.post(f'vehicles/{self._vehicle_id}/command/flash_lights')
+
+    def honk_horn(self):
+        return self._api_client.post(f'vehicles/{self._vehicle_id}/command/honk_horn')
+
+    def open_charge_port(self):
+        return self._api_client.post(f'vehicles/{self._vehicle_id}/command/charge_port_door_open')

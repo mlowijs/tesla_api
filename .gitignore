@@ -2,3 +2,5 @@ test.py
 
 .vscode/
 **/__pycache__/
+build/
+tesla_api.egg-info/

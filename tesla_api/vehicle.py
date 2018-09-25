@@ -49,7 +49,3 @@ class Vehicle:
     @property
     def controls(self):
         return self._controls
-
-    @property
-    def state(self):
-        return self._state

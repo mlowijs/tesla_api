@@ -56,9 +56,8 @@ class TeslaApiClient:
         expiry_time = timedelta(seconds=self._token['expires_in'])
         expiration_date = datetime.fromtimestamp(self._token['created_at']) + expiry_time
 
-        if expiration_date <= datetime.utcnow():
+        if datetime.utcnow() >= expiration_date:
             self._token = self._refresh_token(self._token['refresh_token'])
-            print(self._token)
 
     def _get_headers(self):
         return {

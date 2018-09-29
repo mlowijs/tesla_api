@@ -9,7 +9,7 @@ from tesla_api import TeslaApiClient
 
 client = ApiClient('your@email.com', 'yourPassword')
 
-vehicles = client.vehicles.list()
+vehicles = client.list_vehicles()
 
 for v in vehicles:
     print(v.vin)

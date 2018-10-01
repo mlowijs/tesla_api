@@ -84,7 +84,12 @@ class TeslaApiClient:
         if 'error' in response_json:
             raise ApiError(response_json['error'])
 
-        return response_json['response']
+        api_response = response_json['response']
+
+        if not api_response['result']:
+            raise ApiError(api_response['reason'])
+
+        return api_response
 
     def list_vehicles(self):
         return [Vehicle(self, vehicle) for vehicle in self.get('vehicles')]

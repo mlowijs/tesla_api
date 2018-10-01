@@ -4,3 +4,4 @@ test.py
 **/__pycache__/
 build/
 tesla_api.egg-info/
+dist/

@@ -7,7 +7,7 @@ This is a package for connecting to the Tesla API.
 ```python
 from tesla_api import TeslaApiClient
 
-client = ApiClient('your@email.com', 'yourPassword')
+client = TeslaApiClient('your@email.com', 'yourPassword')
 
 vehicles = client.list_vehicles()
 

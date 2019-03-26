@@ -39,6 +39,10 @@ class Vehicle:
         return self._vehicle['vin']
 
     @property
+    def state(self):
+        return self._vehicle['state']
+
+    @property
     def charge(self):
         return self._charge
 

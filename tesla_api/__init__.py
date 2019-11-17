@@ -78,7 +78,7 @@ class TeslaApiClient:
     def post(self, endpoint, data = {}):
         self.authenticate()
 
-        response = requests.post('{}/{}'.format(API_URL, endpoint), headers=self._get_headers(), data=data)
+        response = requests.post('{}/{}'.format(API_URL, endpoint), headers=self._get_headers(), json=data)
         response_json = response.json()
 
         if 'error' in response_json:

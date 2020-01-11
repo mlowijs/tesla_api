@@ -1,3 +1,5 @@
+import asyncio
+
 STATE_VENT = 'vent'
 STATE_CLOSE = 'close'
 
@@ -6,23 +8,39 @@ class Controls:
         self._api_client = api_client
         self._vehicle_id = vehicle_id
 
-    def _set_sunroof_state(self, state):
-        return self._api_client.post(
+    async def _set_sunroof_state(self, state):
+        return await self._api_client.post(
             'vehicles/{}/command/sun_roof_control'.format(self._vehicle_id),
             {'state': state}
         )
 
+    async def vent_sunroof(self):
+        return await self._set_sunroof_state(STATE_VENT)
+
+    async def close_sunroof(self):
+        return await self._set_sunroof_state(STATE_CLOSE)
+
+    async def flash_lights(self):
+        return await self._api_client.post('vehicles/{}/command/flash_lights'.format(self._vehicle_id))
+
+    async def honk_horn(self):
+        return await self._api_client.post('vehicles/{}/command/honk_horn'.format(self._vehicle_id))
+
+    async def open_charge_port(self):
+        return await self._api_client.post('vehicles/{}/command/charge_port_door_open'.format(self._vehicle_id))
+
+class ControlsSync(Controls):
     def vent_sunroof(self):
-        return self._set_sunroof_state(STATE_VENT)
+        return asyncio.get_event_loop().run_until_complete(super().vent_sunroof())
         
     def close_sunroof(self):
-        return self._set_sunroof_state(STATE_CLOSE)
+        return asyncio.get_event_loop().run_until_complete(super().close_sunroof())
 
     def flash_lights(self):
-        return self._api_client.post('vehicles/{}/command/flash_lights'.format(self._vehicle_id))
+        return asyncio.get_event_loop().run_until_complete(super().flash_lights())
 
     def honk_horn(self):
-        return self._api_client.post('vehicles/{}/command/honk_horn'.format(self._vehicle_id))
+        return asyncio.get_event_loop().run_until_complete(super().honk_horn())
 
     def open_charge_port(self):
-        return self._api_client.post('vehicles/{}/command/charge_port_door_open'.format(self._vehicle_id))
+        return asyncio.get_event_loop().run_until_complete(super().open_charge_port())

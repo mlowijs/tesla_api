@@ -29,8 +29,8 @@ class TeslaApiClient:
         response = requests.post(TOKEN_URL, data=request_data)
         response_json = response.json()
 
-        if 'response' in response_json:
-            raise AuthenticationError(response_json['response'])
+        if response.status_code == 401:
+            raise AuthenticationError(response_json)
 
         return response_json
 
@@ -45,8 +45,8 @@ class TeslaApiClient:
         response = requests.post(TOKEN_URL, data=request_data)
         response_json = response.json()
 
-        if 'response' in response_json:
-            raise AuthenticationError(response_json['response'])
+        if response.status_code == 401:
+            raise AuthenticationError(response_json)
 
         return response_json
 

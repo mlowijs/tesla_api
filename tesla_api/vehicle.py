@@ -16,6 +16,9 @@ class Vehicle:
     async def is_mobile_access_enabled(self):
         return await self._api_client.get('vehicles/{}/mobile_enabled'.format(self.id))
 
+    async def get_data(self):
+        return await self._api_client.get('vehicles/{}/vehicle_data'.format(self.id))
+
     async def get_state(self):
         return await self._api_client.get('vehicles/{}/data_request/vehicle_state'.format(self.id))
 
@@ -55,6 +58,9 @@ class VehicleSync(Vehicle):
 
     def is_mobile_access_enabled(self):
         return asyncio.get_event_loop().run_until_complete(super().is_mobile_access_enabled())
+
+    def get_data(self):
+        return asyncio.get_event_loop().run_until_complete(super().get_data())
 
     def get_state(self):
         return asyncio.get_event_loop().run_until_complete(super().get_state())

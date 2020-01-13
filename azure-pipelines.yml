@@ -1,4 +1,4 @@
-name: $(Date:yyyy.MM.dd)$(Rev:.r)
+name: $(Date:yyyy.M.d)$(Rev:.r)
 
 pool:
   vmImage: 'ubuntu-latest'
@@ -14,7 +14,7 @@ steps:
   displayName: 'Install dependencies'
 
 - script: |
-    python setup.py sdist bdist_wheel -d $(Build.ArtifactStagingDirectory)
+    python setup.py sdist -d $(Build.ArtifactStagingDirectory) bdist_wheel -d $(Build.ArtifactStagingDirectory)
   displayName: 'Build package'
 
 - task: PublishBuildArtifacts@1

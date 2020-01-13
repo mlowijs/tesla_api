@@ -14,6 +14,9 @@ class Vehicle:
     def is_mobile_access_enabled(self):
         return self._api_client.get('vehicles/{}/mobile_enabled'.format(self.id))
 
+    def get_data(self):
+        return self._api_client.get('vehicles/{}/vehicle_data'.format(self.id))
+
     def get_state(self):
         return self._api_client.get('vehicles/{}/data_request/vehicle_state'.format(self.id))
 

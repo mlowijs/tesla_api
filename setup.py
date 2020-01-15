@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="tesla_api",
-    version="1.0.8",
+    version="1.1.0",
     author="M. Lowijs",
     author_email="mlowijs@gmail.com",
     description="API client for Tesla",
@@ -18,4 +18,7 @@ setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
+    install_requires=[
+        "aiohttp"   
+    ]
 )

@@ -28,19 +28,3 @@ class Controls:
 
     async def open_charge_port(self):
         return await self._api_client.post('vehicles/{}/command/charge_port_door_open'.format(self._vehicle_id))
-
-class ControlsSync(Controls):
-    def vent_sunroof(self):
-        return asyncio.get_event_loop().run_until_complete(super().vent_sunroof())
-        
-    def close_sunroof(self):
-        return asyncio.get_event_loop().run_until_complete(super().close_sunroof())
-
-    def flash_lights(self):
-        return asyncio.get_event_loop().run_until_complete(super().flash_lights())
-
-    def honk_horn(self):
-        return asyncio.get_event_loop().run_until_complete(super().honk_horn())
-
-    def open_charge_port(self):
-        return asyncio.get_event_loop().run_until_complete(super().open_charge_port())

@@ -1,0 +1,27 @@
+name: $(Date:yyyy.MM.dd)$(Rev:.r)
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '3.5'
+  displayName: 'Use Python 3.5'
+
+- script: |
+    python -m pip install --upgrade pip setuptools twine wheel
+  displayName: 'Install dependencies'
+
+- script: |
+    python setup.py sdist bdist_wheel
+  displayName: 'Build package'
+
+- task: TwineAuthenticate@1
+  inputs:
+    pythonUploadServiceConnection: 'PyPI production'
+  displayName: 'Authenticate to PyPI'
+
+- script: |
+    python -m twine upload -r pypi --config-file $(PYPIRC_PATH) dist/*
+  displayName: 'Upload to PyPI'

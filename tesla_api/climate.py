@@ -36,25 +36,3 @@ class Climate:
 
     async def stop_steering_wheel_heater(self):
         return await self._api_client.post('vehicles/{}/command/remote_steering_wheel_heater_request'.format(self._vehicle_id),{'on':False})
-
-class ClimateSync(Climate):
-    def get_state(self):
-        return asyncio.get_event_loop().run_until_complete(super().get_state())
-
-    def start_climate(self):
-        return asyncio.get_event_loop().run_until_complete(super().start_climate())
-
-    def stop_climate(self):
-        return asyncio.get_event_loop().run_until_complete(super().stop_climate())
-
-    def set_temperature(self, driver_temperature, passenger_temperature=None):
-        return asyncio.get_event_loop().run_until_complete(super().set_temperature(driver_temperature, passenger_temperature))
-
-    def set_seat_heater(self, temp=0, seat=0):
-        return asyncio.get_event_loop().run_until_complete(super().set_seat_heater(temp, seat))
-
-    def start_steering_wheel_heater(self):
-        return asyncio.get_event_loop().run_until_complete(super().start_steering_wheel_heater())
-
-    def stop_steering_wheel_heater(self):
-        return asyncio.get_event_loop().run_until_complete(super().stop_steering_wheel_heater())

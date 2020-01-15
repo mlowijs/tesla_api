@@ -6,10 +6,10 @@ This is a package for connecting to the Tesla API.
 
 ```python
 import asyncio
-from tesla_api import TeslaApiClientAsync
+from tesla_api import TeslaApiClient
 
 async def main():
-    client = TeslaApiClientAsync('your@email.com', 'yourPassword')
+    client = TeslaApiClient('your@email.com', 'yourPassword')
 
     vehicles = await client.list_vehicles()
 
@@ -25,10 +25,10 @@ asyncio.run(main())
 
 ```python
 import asyncio
-from tesla_api import TeslaApiClientAsync
+from tesla_api import TeslaApiClient
 
 async def main():
-    client = TeslaApiClientAsync('your@email.com', 'yourPassword')
+    client = TeslaApiClient('your@email.com', 'yourPassword')
 
     energy_sites = await client.list_energy_sites()
     print("Number of energy sites = %d" % (len(energy_sites)))
@@ -39,20 +39,4 @@ async def main():
     await energy_sites[0].set_backup_reserve_percent(reserve+1)
 
 asyncio.run(main())
-```
-
-## Synchronous interface
-
-There is also a legacy synchronous interface available if not using an asyncio loop in your project:
-
-```python
-from tesla_api import TeslaApiClient
-
-client = TeslaApiClient('your@email.com', 'yourPassword')
-
-vehicles = client.list_vehicles()
-
-for v in vehicles:
-    print(v.vin)
-    v.controls.flash_lights()
 ```

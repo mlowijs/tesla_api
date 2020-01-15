@@ -24,16 +24,3 @@ class Charge:
             'vehicles/{}/command/set_charge_limit'.format(self._vehicle_id),
             {'percent': percentage}
         )
-
-class ChargeSync(Charge):
-    def get_state(self):
-        return asyncio.get_event_loop().run_until_complete(super().get_state())
-
-    def start_charging(self):
-        return asyncio.get_event_loop().run_until_complete(super().start_charging())
-
-    def stop_charging(self):
-        return asyncio.get_event_loop().run_until_complete(super().stop_charging())
-
-    def set_charge_limit(self, percentage):
-        return asyncio.get_event_loop().run_until_complete(super().set_charge_limit(percentage))

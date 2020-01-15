@@ -99,37 +99,3 @@ class Energy:
 
     async def set_operating_mode_autonomous(self):
         return await self.set_operating_mode('autonomous')
-
-class EnergySync(Energy):
-    def get_backup_reserve_percent(self):
-        return asyncio.get_event_loop().run_until_complete(super().get_backup_reserve_percent())
-
-    def get_operating_mode(self):
-        return asyncio.get_event_loop().run_until_complete(super().get_operating_mode())
-
-    def get_version(self):
-        return asyncio.get_event_loop().run_until_complete(super().get_version())
-
-    def get_battery_count(self):
-        return asyncio.get_event_loop().run_until_complete(super().get_battery_count())
-
-    def get_energy_site_live_status_percentage_charged(self):
-        return asyncio.get_event_loop().run_until_complete(super().get_energy_site_live_status_percentage_charged())
-
-    def get_energy_site_live_status_energy_left(self):
-        return asyncio.get_event_loop().run_until_complete(super().get_energy_site_live_status_energy_left())
-
-    def get_energy_site_live_status_total_pack_energy(self):
-        return asyncio.get_event_loop().run_until_complete(super().get_energy_site_live_status_total_pack_energy())
-
-    def set_backup_reserve_percent(self, backup_reserve_percent):
-        return asyncio.get_event_loop().run_until_complete(super().set_backup_reserve_percent(backup_reserve_percent))
-
-    def set_operating_mode_self_consumption(self):
-        return asyncio.get_event_loop().run_until_complete(super().set_operating_mode_self_consumption())
-
-    def set_operating_mode_backup(self):
-        return asyncio.get_event_loop().run_until_complete(super().set_operating_mode_backup())
-
-    def set_operating_mode_autonomous(self):
-        return asyncio.get_event_loop().run_until_complete(super().set_operating_mode_autonomous())

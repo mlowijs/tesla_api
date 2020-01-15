@@ -3,8 +3,8 @@ from datetime import datetime, timedelta
 
 import aiohttp
 
-from .vehicle import Vehicle, VehicleSync
-from .energy import Energy, EnergySync
+from .vehicle import Vehicle
+from .energy import Energy
 
 TESLA_API_BASE_URL = 'https://owner-api.teslamotors.com/'
 TOKEN_URL = TESLA_API_BASE_URL + 'oauth/token'
@@ -13,7 +13,7 @@ API_URL = TESLA_API_BASE_URL + 'api/1'
 OAUTH_CLIENT_ID = '81527cff06843c8634fdc09e8ac0abefb46ac849f38fe1e431c2ef2106796384'
 OAUTH_CLIENT_SECRET = 'c7257eb71a564034f9419ee651c7d0e5f7aa6bfbd18bafb5c5c033b093bb2fa3'
 
-class TeslaApiClientAsync:
+class TeslaApiClient:
     def __init__(self, email, password):
         self._email = email
         self._password = password
@@ -98,13 +98,6 @@ class TeslaApiClientAsync:
 
     async def list_energy_sites(self, _class=Energy):
         return [_class(self, products['energy_site_id']) for products in await self.get('products')]
-
-class TeslaApiClient(TeslaApiClientAsync):
-    def list_vehicles(self):
-        return asyncio.get_event_loop().run_until_complete(super().list_vehicles(_class=VehicleSync))
-
-    def list_energy_sites(self):
-        return asyncio.get_event_loop().run_until_complete(super().list_energy_sites(_class=EnergySync))
 
 class AuthenticationError(Exception):
     def __init__(self, error):

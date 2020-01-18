@@ -14,10 +14,16 @@ OAUTH_CLIENT_ID = '81527cff06843c8634fdc09e8ac0abefb46ac849f38fe1e431c2ef2106796
 OAUTH_CLIENT_SECRET = 'c7257eb71a564034f9419ee651c7d0e5f7aa6bfbd18bafb5c5c033b093bb2fa3'
 
 class TeslaApiClient:
-    def __init__(self, email, password):
+    def __init__(self, email=None, password=None, token=None):
+        """Creates client from provided credentials.
+
+        If token is not provided, or is no longer valid, then a new token will
+        be fetched if email and password are provided.
+        """
+        assert token is not None or (email is not None and password is not None)
         self._email = email
         self._password = password
-        self._token = None
+        self.token = token
         self._session = aiohttp.ClientSession()
 
     async def close(self):
@@ -55,18 +61,18 @@ class TeslaApiClient:
         return response_json
 
     async def authenticate(self):
-        if not self._token:
-            self._token = await self._get_new_token()
+        if not self.token:
+            self.token = await self._get_new_token()
 
-        expiry_time = timedelta(seconds=self._token['expires_in'])
-        expiration_date = datetime.fromtimestamp(self._token['created_at']) + expiry_time
+        expiry_time = timedelta(seconds=self.token['expires_in'])
+        expiration_date = datetime.fromtimestamp(self.token['created_at']) + expiry_time
 
         if datetime.utcnow() >= expiration_date:
-            self._token = await self._refresh_token(self._token['refresh_token'])
+            self.token = await self._refresh_token(self.token['refresh_token'])
 
     def _get_headers(self):
         return {
-            'Authorization': 'Bearer {}'.format(self._token['access_token'])
+            'Authorization': 'Bearer {}'.format(self.token['access_token'])
         }
 
     async def get(self, endpoint):

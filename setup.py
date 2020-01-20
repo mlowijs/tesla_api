@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="tesla_api",
-    version="2.0.0",
+    version="2.0.1",
     author="M. Lowijs",
     author_email="mlowijs@gmail.com",
     description="API client for Tesla",

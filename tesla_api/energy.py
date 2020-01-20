@@ -66,6 +66,10 @@ class Energy:
     async def get_energy_site_live_status_total_pack_energy(self):
         status = await self.get_energy_site_live_status()
         return int(status["total_pack_energy"])
+    
+    async def get_solar_power(self):
+        status = await self.get_energy_site_live_status()
+        return int(status["solar_power"])
 
 
     # Setting of the backup_reserve_percent used in self_consumption

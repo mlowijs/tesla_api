@@ -3,7 +3,7 @@ import asyncio
 from .charge import Charge
 from .climate import Climate
 from .controls import Controls
-#tyddynonn 20200125 - add update()to refresh vehicle info, update internal state in wake_up()
+
 class Vehicle:
     def __init__(self, api_client, vehicle):
         self._api_client = api_client
@@ -29,11 +29,11 @@ class Vehicle:
         return await self._api_client.get('vehicles/{}/data_request/gui_settings'.format(self.id))
 
     async def wake_up(self):
-        self._vehicle= await self._api_client.post('vehicles/{}/wake_up'.format(self.id))
+        self._vehicle = await self._api_client.post('vehicles/{}/wake_up'.format(self.id))
         return self._vehicle
     
     async def update(self):      
-        self._vehicle=await self._api_client.get('vehicles/{}'.format(self.id))
+        self._vehicle = await self._api_client.get('vehicles/{}'.format(self.id))
         return self._vehicle
     
     @property

@@ -3,7 +3,7 @@ import asyncio
 from .charge import Charge
 from .climate import Climate
 from .controls import Controls
-
+#tyddynonn 20200125 - add update method to refresh vehicle info
 class Vehicle:
     def __init__(self, api_client, vehicle):
         self._api_client = api_client
@@ -30,7 +30,11 @@ class Vehicle:
 
     async def wake_up(self):
         return await self._api_client.post('vehicles/{}/wake_up'.format(self.id))
-
+    
+    async def update(self):      
+        self._vehicle=await self._api_client.get('vehicles/{}'.format(self.id))
+        return self._vehicle
+    
     @property
     def id(self):
         return self._vehicle['id']

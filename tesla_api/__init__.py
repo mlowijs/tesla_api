@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 
 import aiohttp
 
+from .exceptions import ApiError, AuthenticationError
 from .vehicle import Vehicle
 from .energy import Energy
 
@@ -87,7 +88,7 @@ class TeslaApiClient:
 
         return response_json['response']
 
-    async def post(self, endpoint, data = {}):
+    async def post(self, endpoint, data=None):
         await self.authenticate()
         url = '{}/{}'.format(API_URL, endpoint)
 
@@ -104,11 +105,3 @@ class TeslaApiClient:
 
     async def list_energy_sites(self, _class=Energy):
         return [_class(self, products['energy_site_id']) for products in await self.get('products')]
-
-class AuthenticationError(Exception):
-    def __init__(self, error):
-        super().__init__('Authentication to the Tesla API failed: {}'.format(error))
-
-class ApiError(Exception):
-    def __init__(self, error):
-        super().__init__('Tesla API call failed: {}'.format(error))

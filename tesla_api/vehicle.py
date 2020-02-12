@@ -30,11 +30,9 @@ class Vehicle:
 
     async def wake_up(self):
         self._vehicle = await self._api_client.post('vehicles/{}/wake_up'.format(self.id))
-        return self._vehicle
     
     async def update(self):      
         self._vehicle = await self._api_client.get('vehicles/{}'.format(self.id))
-        return self._vehicle
     
     @property
     def id(self):

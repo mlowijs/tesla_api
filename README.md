@@ -16,7 +16,7 @@ async def main():
     for v in vehicles:
         print(v.vin)
         await v.controls.flash_lights()
-        
+
     await client.close()
 
 asyncio.run(main())
@@ -39,6 +39,8 @@ async def main():
     print("Backup reserve percent = %d" % (reserve))
     print("Increment backup reserve percent")
     await energy_sites[0].set_backup_reserve_percent(reserve+1)
+
+    await client.close()
 
 asyncio.run(main())
 ```

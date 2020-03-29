@@ -45,10 +45,13 @@ class Vehicle:
         return await self._api_client.get('vehicles/{}/data_request/gui_settings'.format(self.id))
 
     async def wake_up(self):
-        return await self._api_client.post('vehicles/{}/wake_up'.format(self.id))
+        self._vehicle = await self._api_client.post('vehicles/{}/wake_up'.format(self.id))
 
     async def remote_start(self):
         return await self._command('remote_start_drive')
+    
+    async def update(self):      
+        self._vehicle = await self._api_client.get('vehicles/{}'.format(self.id))
 
     def __dir__(self):
         """Include _vehicle keys in dir(), which are accessible with __getattr__()."""

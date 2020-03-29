@@ -73,8 +73,12 @@ class Vehicle:
         except asyncio.TimeoutError:
             raise VehicleUnavailableError()
 
-    async def remote_start(self):
-        return await self._command('remote_start_drive')
+    async def remote_start(self, password):
+        """Enable keyless driving (must start car within a 2 minute window).
+
+        password - The account password to reauthenticate.
+        """
+        return await self._command('remote_start_drive', data={'password': password})
     
     async def update(self):      
         self._vehicle = await self._api_client.get('vehicles/{}'.format(self.id))

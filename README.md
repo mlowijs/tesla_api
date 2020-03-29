@@ -16,6 +16,8 @@ async def main():
     for v in vehicles:
         print(v.vin)
         await v.controls.flash_lights()
+        
+    await client.close()
 
 asyncio.run(main())
 ```

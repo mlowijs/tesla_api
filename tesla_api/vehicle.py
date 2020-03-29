@@ -54,18 +54,13 @@ class Vehicle:
         """
         return await self._command('remote_start_drive', data={'password': password})
 
-    @property
-    def id(self):
-        return self._vehicle['id']
+    def __dir__(self):
+        """Include _vehicle keys in dir(), which are accessible with __getattr__()."""
+        return super().__dir__() | self._vehicle.keys()
 
-    @property
-    def display_name(self):
-        return self._vehicle['display_name']
-
-    @property
-    def vin(self):
-        return self._vehicle['vin']
-
-    @property
-    def state(self):
-        return self._vehicle['state']
+    def __getattr__(self, name):
+        """Allow attribute access to _vehicle details."""
+        try:
+            return self._vehicle[name]
+        except KeyError:
+            raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")

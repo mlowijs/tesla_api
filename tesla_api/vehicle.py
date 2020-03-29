@@ -14,7 +14,7 @@ class Vehicle:
         self.climate = Climate(self)
         self.controls = Controls(self)
 
-    async def _command(self, command_endpoint, data=None):
+    async def _command(self, command_endpoint, data=None, _retry=True):
         """Handles vehicle commands with the common reason/result response.
 
         Args:
@@ -29,7 +29,15 @@ class Vehicle:
             await self.wake_up()
 
         endpoint = 'vehicles/{}/command/{}'.format(self.id, command_endpoint)
-        res = await self._api_client.post(endpoint, data)
+        try:
+            res = await self._api_client.post(endpoint, data)
+        except ApiError as e:
+            # If first attempt, retry with a wake up.
+            if 'vehicle unavailable' in e.reason and _retry:
+                self._vehicle['state'] = 'offline'
+                return await self._command(command_endpoint, data, _retry=False)
+            raise
+
         if res.get('result') is not True:
             raise ApiError(res.get('reason', ''))
 

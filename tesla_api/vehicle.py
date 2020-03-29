@@ -47,8 +47,12 @@ class Vehicle:
     async def wake_up(self):
         return await self._api_client.post('vehicles/{}/wake_up'.format(self.id))
 
-    async def remote_start(self):
-        return await self._command('remote_start_drive')
+    async def remote_start(self, password):
+        """Enable keyless driving (must start car within a 2 minute window).
+
+        password - The account password to reauthenticate.
+        """
+        return await self._command('remote_start_drive', data={'password': password})
 
     @property
     def id(self):

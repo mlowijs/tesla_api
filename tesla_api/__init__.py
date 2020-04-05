@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 
 import aiohttp
 
-from .exceptions import ApiError, AuthenticationError
+from .exceptions import ApiError, AuthenticationError, VehicleUnavailableError
 from .vehicle import Vehicle
 from .energy import Energy
 
@@ -90,6 +90,8 @@ class TeslaApiClient:
             response_json = await resp.json()
 
         if 'error' in response_json:
+            if 'vehicle unavailable' in response_json['error']:
+                raise VehicleUnavailableError()
             raise ApiError(response_json['error'])
 
         return response_json['response']
@@ -102,6 +104,8 @@ class TeslaApiClient:
             response_json = await resp.json()
 
         if 'error' in response_json:
+            if 'vehicle unavailable' in response_json['error']:
+                raise VehicleUnavailableError()
             raise ApiError(response_json['error'])
 
         return response_json['response']

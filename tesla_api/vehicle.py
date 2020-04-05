@@ -31,9 +31,9 @@ class Vehicle:
         endpoint = 'vehicles/{}/command/{}'.format(self.id, command_endpoint)
         try:
             res = await self._api_client.post(endpoint, data)
-        except ApiError as e:
+        except VehicleUnavailableError as e:
             # If first attempt, retry with a wake up.
-            if 'vehicle unavailable' in e.reason and _retry:
+            if _retry:
                 self._vehicle['state'] = 'offline'
                 return await self._command(command_endpoint, data, _retry=False)
             raise

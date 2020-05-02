@@ -1,30 +1,30 @@
 import asyncio
+from functools import partialmethod
 
 STATE_VENT = 'vent'
 STATE_CLOSE = 'close'
 
 class Controls:
-    def __init__(self, api_client, vehicle_id):
-        self._api_client = api_client
-        self._vehicle_id = vehicle_id
+    def __init__(self, vehicle):
+        self._vehicle = vehicle
+        self._api_client = vehicle._api_client
 
     async def _set_sunroof_state(self, state):
-        return await self._api_client.post(
-            'vehicles/{}/command/sun_roof_control'.format(self._vehicle_id),
-            {'state': state}
-        )
-
-    async def vent_sunroof(self):
-        return await self._set_sunroof_state(STATE_VENT)
-
-    async def close_sunroof(self):
-        return await self._set_sunroof_state(STATE_CLOSE)
+        return await self._vehicle._command('sun_roof_control', {'state': state})
+    vent_sunroof = partialmethod(_set_sunroof_state, STATE_VENT)
+    close_sunroof = partialmethod(_set_sunroof_state, STATE_CLOSE)
 
     async def flash_lights(self):
-        return await self._api_client.post('vehicles/{}/command/flash_lights'.format(self._vehicle_id))
+        return await self._vehicle._command('flash_lights')
 
     async def honk_horn(self):
-        return await self._api_client.post('vehicles/{}/command/honk_horn'.format(self._vehicle_id))
+        return await self._vehicle._command('honk_horn')
 
     async def open_charge_port(self):
-        return await self._api_client.post('vehicles/{}/command/charge_port_door_open'.format(self._vehicle_id))
+        return await self._vehicle._command('charge_port_door_open')
+
+    async def door_lock(self):
+        return await self._vehicle._command('door_lock')
+
+    async def door_unlock(self):
+        return await self._vehicle._command('door_unlock')

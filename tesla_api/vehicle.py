@@ -3,7 +3,7 @@ import asyncio
 from .charge import Charge
 from .climate import Climate
 from .controls import Controls
-from .exceptions import ApiError
+from .exceptions import ApiError, VehicleUnavailableError
 
 class Vehicle:
     def __init__(self, api_client, vehicle):
@@ -14,7 +14,7 @@ class Vehicle:
         self.climate = Climate(self)
         self.controls = Controls(self)
 
-    async def _command(self, command_endpoint, data=None):
+    async def _command(self, command_endpoint, data=None, _retry=True):
         """Handles vehicle commands with the common reason/result response.
 
         Args:
@@ -24,8 +24,20 @@ class Vehicle:
         Raises:
             ApiError on unsuccessful response.
         """
+        # Commands won't work if car is offline, so try and wake car first.
+        if self.state != "online":
+            await self.wake_up()
+
         endpoint = 'vehicles/{}/command/{}'.format(self.id, command_endpoint)
-        res = await self._api_client.post(endpoint, data)
+        try:
+            res = await self._api_client.post(endpoint, data)
+        except VehicleUnavailableError as e:
+            # If first attempt, retry with a wake up.
+            if _retry:
+                self._vehicle['state'] = 'offline'
+                return await self._command(command_endpoint, data, _retry=False)
+            raise
+
         if res.get('result') is not True:
             raise ApiError(res.get('reason', ''))
 
@@ -44,11 +56,32 @@ class Vehicle:
     async def get_gui_settings(self):
         return await self._api_client.get('vehicles/{}/data_request/gui_settings'.format(self.id))
 
-    async def wake_up(self):
-        return await self._api_client.post('vehicles/{}/wake_up'.format(self.id))
+    async def wake_up(self, timeout=30):
+        """Attempt to wake up the car.
 
-    async def remote_start(self):
-        return await self._command('remote_start_drive')
+        Throws VehicleUnavailableError if timeout seconds passes without success.
+        Otherwise, vehicle will be online when this function returns.
+        """
+        async def _wake():
+            self._vehicle['state'] = 'offline'
+            while self._vehicle['state'] != 'online':
+                self._vehicle = await self._api_client.post('vehicles/{}/wake_up'.format(self.id))
+                await asyncio.sleep(0.1)
+
+        try:
+            await asyncio.wait_for(_wake(), timeout)
+        except asyncio.TimeoutError:
+            raise VehicleUnavailableError()
+
+    async def remote_start(self, password):
+        """Enable keyless driving (must start car within a 2 minute window).
+
+        password - The account password to reauthenticate.
+        """
+        return await self._command('remote_start_drive', data={'password': password})
+    
+    async def update(self):      
+        self._vehicle = await self._api_client.get('vehicles/{}'.format(self.id))
 
     def __dir__(self):
         """Include _vehicle keys in dir(), which are accessible with __getattr__()."""

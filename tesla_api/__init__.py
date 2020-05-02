@@ -16,6 +16,9 @@ OAUTH_CLIENT_ID = '81527cff06843c8634fdc09e8ac0abefb46ac849f38fe1e431c2ef2106796
 OAUTH_CLIENT_SECRET = 'c7257eb71a564034f9419ee651c7d0e5f7aa6bfbd18bafb5c5c033b093bb2fa3'
 
 class TeslaApiClient:
+    callback_update = None  # Called when vehicle's state has been updated.
+    callback_wake_up = None  # Called when attempting to wake a vehicle.
+
     def __init__(self, email=None, password=None, token=None, on_new_token=None):
         """Creates client from provided credentials.
 

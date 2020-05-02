@@ -41,11 +41,18 @@ class Vehicle:
         if res.get('result') is not True:
             raise ApiError(res.get('reason', ''))
 
+    def _update_vehicle(self, state):
+        self._vehicle = state
+        if self._api_client.callback_update is not None:
+            self._api_client.callback_update(self)
+
     async def is_mobile_access_enabled(self):
         return await self._api_client.get('vehicles/{}/mobile_enabled'.format(self.id))
 
     async def get_data(self):
-        return await self._api_client.get('vehicles/{}/vehicle_data'.format(self.id))
+        data = await self._api_client.get('vehicles/{}/vehicle_data'.format(self.id))
+        self._update_vehicle({k: v for k,v in data.items() if not isinstance(v, dict)})
+        return data
 
     async def get_state(self):
         return await self._api_client.get('vehicles/{}/data_request/vehicle_state'.format(self.id))
@@ -65,8 +72,12 @@ class Vehicle:
         async def _wake():
             self._vehicle['state'] = 'offline'
             while self._vehicle['state'] != 'online':
-                self._vehicle = await self._api_client.post('vehicles/{}/wake_up'.format(self.id))
+                state = await self._api_client.post('vehicles/{}/wake_up'.format(self.id))
+                self._update_vehicle(state)
                 await asyncio.sleep(0.1)
+
+        if self._api_client.callback_wake_up is not None:
+            self._api_client.callback_wake_up(self)
 
         try:
             await asyncio.wait_for(_wake(), timeout)
@@ -81,7 +92,7 @@ class Vehicle:
         return await self._command('remote_start_drive', data={'password': password})
     
     async def update(self):      
-        self._vehicle = await self._api_client.get('vehicles/{}'.format(self.id))
+        self._update_vehicle(await self._api_client.get('vehicles/{}'.format(self.id)))
 
     def __dir__(self):
         """Include _vehicle keys in dir(), which are accessible with __getattr__()."""

@@ -38,6 +38,16 @@ class TeslaApiClient:
         self._new_token_callback = on_new_token
         self._session = aiohttp.ClientSession()
 
+    @property
+    def token(self):
+        """
+        The authentication token in JSON string format
+
+        Contains expiration data and a refresh token, an must be presented in full to the constructor
+        as an alternative to email/password authentication
+        """
+        return json.dumps(self._token)
+
     async def close(self):
         await self._session.close()
 
@@ -111,7 +121,9 @@ class TeslaApiClient:
         return response_json['response']
 
     async def list_vehicles(self, _class=Vehicle):
-        return [_class(self, vehicle) for vehicle in await self.get('vehicles')]
+        return [_class(self, vehicle) for product in await self.get('vehicles') if 'vehicle_id' in product]
 
     async def list_energy_sites(self, _class=Energy):
-        return [_class(self, products['energy_site_id']) for products in await self.get('products')]
+        return [_class(self, product['energy_site_id']) for product in await self.get('products') if 'energy_site_id' in product]
+
+

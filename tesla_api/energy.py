@@ -25,10 +25,15 @@
 
 import asyncio
 
+
 class Energy:
     def __init__(self, api_client, energy_site_id):
         self._api_client = api_client
         self._energy_site_id = energy_site_id
+
+    @property
+    def site_id(self):
+        return self._energy_site_id
 
     async def get_energy_site_info(self):
         return await self._api_client.get('energy_sites/{}/site_info'.format(self._energy_site_id))
@@ -50,9 +55,26 @@ class Energy:
         info = await self.get_energy_site_info()
         return int(info["battery_count"])
 
-
     async def get_energy_site_live_status(self):
         return await self._api_client.get('energy_sites/{}/live_status'.format(self._energy_site_id))
+
+    async def get_energy_site_calendar_history_data(self, kind: str = 'energy', period: str = 'day',
+                                                    end_date: str = None, time_zone: str = None):
+        """
+        Returns historical energy data
+        :param kind: [power, energy, self_consumption]
+        :param period: Amount of time to include in report. One of day, week, month, year, and lifetime.
+                    When kind is power, this parameter is ignored, is not required, and is always treated as day
+        :param end_date: ISO 8601 datetime, e.g. 2019-12-23T17:39:18.546Z.
+                    The response report interval ends on this datetime and starts at the beginning of the given period at 1:00 AM. Defaults to the current time.
+        :param time_zone: IANA/Olsen time zone identifier, e.g. America/New_York. Seems to have no effect on response data.
+        """
+        query = f'kind={kind}&period={period}'
+        if end_date is not None:
+            query += f'&end_date={end_date}'  # must be ISO 8601 datetime, e.g. 2019-12-23T17:39:18.546Z
+        if time_zone is not None:
+            query += f'&time_zone={time_zone}'  # must be IANA/Olsen time zone identifier, e.g. America/New_York
+        return await self._api_client.get('energy_sites/{}/calendar_history'.format(self._energy_site_id), query)
 
     # Helper functions for get_energy_site_live_status
     async def get_energy_site_live_status_percentage_charged(self):
@@ -66,11 +88,10 @@ class Energy:
     async def get_energy_site_live_status_total_pack_energy(self):
         status = await self.get_energy_site_live_status()
         return int(status["total_pack_energy"])
-    
+
     async def get_solar_power(self):
         status = await self.get_energy_site_live_status()
         return int(status["solar_power"])
-
 
     # Setting of the backup_reserve_percent used in self_consumption
     # (i.e. self-powered mode).

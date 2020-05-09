@@ -38,15 +38,11 @@ class TeslaApiClient:
         self._new_token_callback = on_new_token
         self._session = aiohttp.ClientSession()
 
-    @property
-    def token(self):
-        """
-        The authentication token in JSON string format
+    async def __aenter__(self):
+        return self
 
-        Contains expiration data and a refresh token, an must be presented in full to the constructor
-        as an alternative to email/password authentication
-        """
-        return json.dumps(self._token)
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        await self.close()
 
     async def close(self):
         await self._session.close()
@@ -92,9 +88,11 @@ class TeslaApiClient:
             'Authorization': 'Bearer {}'.format(self._token['access_token'])
         }
 
-    async def get(self, endpoint):
+    async def get(self, endpoint, query=None):
         await self.authenticate()
         url = '{}/{}'.format(API_URL, endpoint)
+        if query is not None:
+            url += f'?{query}'
 
         async with self._session.get(url, headers=self._get_headers()) as resp:
             response_json = await resp.json()
@@ -103,7 +101,6 @@ class TeslaApiClient:
             if 'vehicle unavailable' in response_json['error']:
                 raise VehicleUnavailableError()
             raise ApiError(response_json['error'])
-
         return response_json['response']
 
     async def post(self, endpoint, data=None):

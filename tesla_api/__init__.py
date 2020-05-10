@@ -18,6 +18,7 @@ OAUTH_CLIENT_SECRET = 'c7257eb71a564034f9419ee651c7d0e5f7aa6bfbd18bafb5c5c033b09
 class TeslaApiClient:
     callback_update = None  # Called when vehicle's state has been updated.
     callback_wake_up = None  # Called when attempting to wake a vehicle.
+    timeout = 30  # Default timeout for operations such as Vehicle.wake_up().
 
     def __init__(self, email=None, password=None, token=None, on_new_token=None):
         """Creates client from provided credentials.

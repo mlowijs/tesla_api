@@ -31,7 +31,7 @@ class TeslaApiClient:
         directly into this constructor.
         """
         assert token is not None or (email is not None and password is not None)
-        assert on_new_token is None or callable(on_new_token)
+        assert on_new_token is None or asyncio.iscoroutinefunction(on_new_token)
         self._email = email
         self._password = password
         self._token = json.loads(token) if token else None
@@ -55,7 +55,7 @@ class TeslaApiClient:
 
         # Send token to application via callback.
         if self._new_token_callback:
-            self._new_token_callback(json.dumps(response_json))
+            asyncio.create_task(self._new_token_callback(json.dumps(response_json)))
 
         return response_json
 

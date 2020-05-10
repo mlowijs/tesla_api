@@ -44,7 +44,7 @@ class Vehicle:
     def _update_vehicle(self, state):
         self._vehicle = state
         if self._api_client.callback_update is not None:
-            self._api_client.callback_update(self)
+            asyncio.create_task(self._api_client.callback_update(self))
 
     async def is_mobile_access_enabled(self):
         return await self._api_client.get('vehicles/{}/mobile_enabled'.format(self.id))
@@ -88,7 +88,7 @@ class Vehicle:
                 self._update_vehicle(state)
 
         if self._api_client.callback_wake_up is not None:
-            self._api_client.callback_wake_up(self)
+            asyncio.create_task(self._api_client.callback_wake_up(self))
 
         try:
             await asyncio.wait_for(_wake(), timeout)

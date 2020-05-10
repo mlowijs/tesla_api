@@ -110,8 +110,8 @@ class TeslaApiClient:
 
         return response_json['response']
 
-    async def list_vehicles(self, _class=Vehicle):
-        return [_class(self, vehicle) for vehicle in await self.get('vehicles')]
+    async def list_vehicles(self):
+        return [Vehicle(self, vehicle) for vehicle in await self.get('vehicles')]
 
-    async def list_energy_sites(self, _class=Energy):
-        return [_class(self, products['energy_site_id']) for products in await self.get('products')]
+    async def list_energy_sites(self):
+        return [Energy(self, products['energy_site_id']) for products in await self.get('products')]

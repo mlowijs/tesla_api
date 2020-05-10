@@ -80,11 +80,12 @@ class Vehicle:
         delay = timeout / 100
 
         async def _wake():
-            self._vehicle['state'] = 'offline'
+            state = await self._api_client.post('vehicles/{}/wake_up'.format(self.id))
+            self._update_vehicle(state)
             while self._vehicle['state'] != 'online':
+                await asyncio.sleep(delay)
                 state = await self._api_client.post('vehicles/{}/wake_up'.format(self.id))
                 self._update_vehicle(state)
-                await asyncio.sleep(delay)
 
         if self._api_client.callback_wake_up is not None:
             self._api_client.callback_wake_up(self)

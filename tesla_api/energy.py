@@ -23,7 +23,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import asyncio
 from datetime import datetime, timedelta
 from typing import Optional
 
@@ -79,7 +78,7 @@ class Energy:
         """
         params = {'kind': kind, 'period': period}
         if end_date is not None:
-            if type(end_date) is datetime:
+            if isinstance(end_date, datetime):
                 if end_date.hour == 0:
                     # if the datetime object's time is 00:00 then the API returns nothing. We adjust by adding an hour
                     # so you can use datetime(year=2020, month=5, day=2) and it gets the data for May 2, 2020 as expected
@@ -87,10 +86,11 @@ class Energy:
                 if end_date.tzinfo is None and time_zone is not None:
                     tz = pytz.timezone(time_zone)
                     end_date = tz.localize(end_date, time_zone)
-            params['end_date'] = end_date.isoformat() if type(end_date) is datetime else end_date
+            params['end_date'] = end_date.isoformat() if isinstance(end_date, datetime) else end_date
         if time_zone is not None:
             params['time_zone'] = time_zone
-        return await self._api_client.get('energy_sites/{}/calendar_history'.format(self._energy_site_id), params=params)
+        return await self._api_client.get('energy_sites/{}/calendar_history'.format(self._energy_site_id),
+                                          params=params)
 
     # Helper functions for get_energy_site_live_status
     async def get_energy_site_live_status_percentage_charged(self):

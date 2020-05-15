@@ -24,6 +24,10 @@
 # SOFTWARE.
 
 import asyncio
+from datetime import datetime, timedelta
+from typing import Optional
+
+import pytz
 
 
 class Energy:
@@ -59,22 +63,34 @@ class Energy:
         return await self._api_client.get('energy_sites/{}/live_status'.format(self._energy_site_id))
 
     async def get_energy_site_calendar_history_data(self, kind: str = 'energy', period: str = 'day',
-                                                    end_date: str = None, time_zone: str = None):
+                                                    end_date: [str, datetime] = None,
+                                                    time_zone: str = None) -> Optional[dict]:
         """
         Returns historical energy data
         :param kind: [power, energy, self_consumption]
         :param period: Amount of time to include in report. One of day, week, month, year, and lifetime.
-                    When kind is power, this parameter is ignored, is not required, and is always treated as day
-        :param end_date: ISO 8601 datetime, e.g. 2019-12-23T17:39:18.546Z.
-                    The response report interval ends on this datetime and starts at the beginning of the given period at 1:00 AM. Defaults to the current time.
-        :param time_zone: IANA/Olsen time zone identifier, e.g. America/New_York. Seems to have no effect on response data.
+                    When kind is 'power', this parameter is ignored, and the period is always 'day'
+        :param end_date: ISO 8601 datetime, e.g. 2019-12-23T17:39:18.546Z. either in str or as datetime
+                    The response report interval ends on this datetime and starts at the beginning of the given period
+                    at 1:00 AM.  Note time cannot be 00:00. Defaults to the current time.
+        :param time_zone: IANA/Olsen time zone identifier, e.g. America/New_York. If set, and if the end_date is a
+                    'naive' datetime object (without timezone info) this field will be used to set the timezone
+                    for the end_date.  Otherwise it is ignored
         """
-        query = f'kind={kind}&period={period}'
+        params = {'kind': kind, 'period': period}
         if end_date is not None:
-            query += f'&end_date={end_date}'  # must be ISO 8601 datetime, e.g. 2019-12-23T17:39:18.546Z
+            if type(end_date) is datetime:
+                if end_date.hour == 0:
+                    # if the datetime object's time is 00:00 then the API returns nothing. We adjust by adding an hour
+                    # so you can use datetime(year=2020, month=5, day=2) and it gets the data for May 2, 2020 as expected
+                    end_date = end_date + timedelta(hours=1)
+                if end_date.tzinfo is None and time_zone is not None:
+                    tz = pytz.timezone(time_zone)
+                    end_date = tz.localize(end_date, time_zone)
+            params['end_date'] = end_date.isoformat() if type(end_date) is datetime else end_date
         if time_zone is not None:
-            query += f'&time_zone={time_zone}'  # must be IANA/Olsen time zone identifier, e.g. America/New_York
-        return await self._api_client.get('energy_sites/{}/calendar_history'.format(self._energy_site_id), query)
+            params['time_zone'] = time_zone
+        return await self._api_client.get('energy_sites/{}/calendar_history'.format(self._energy_site_id), params=params)
 
     # Helper functions for get_energy_site_live_status
     async def get_energy_site_live_status_percentage_charged(self):

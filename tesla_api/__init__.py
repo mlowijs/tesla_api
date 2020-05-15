@@ -88,15 +88,11 @@ class TeslaApiClient:
             'Authorization': 'Bearer {}'.format(self._token['access_token'])
         }
 
-    async def get(self, endpoint, query=None):
+    async def get(self, endpoint, params=None):
         await self.authenticate()
         url = '{}/{}'.format(API_URL, endpoint)
-        if query is not None:
-            url += f'?{query}'
-
-        async with self._session.get(url, headers=self._get_headers()) as resp:
+        async with self._session.get(url, headers=self._get_headers(), params=params) as resp:
             response_json = await resp.json()
-
         if 'error' in response_json:
             if 'vehicle unavailable' in response_json['error']:
                 raise VehicleUnavailableError()
@@ -118,7 +114,7 @@ class TeslaApiClient:
         return response_json['response']
 
     async def list_vehicles(self, _class=Vehicle):
-        return [_class(self, vehicle) for product in await self.get('vehicles') if 'vehicle_id' in product]
+        return [_class(self, vehicle) for product in await self.get('vehicles')]
 
     async def list_energy_sites(self, _class=Energy):
         return [_class(self, product['energy_site_id']) for product in await self.get('products') if 'energy_site_id' in product]

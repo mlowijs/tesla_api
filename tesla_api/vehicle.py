@@ -75,9 +75,12 @@ class Vehicle:
         Raises:
             VehicleUnavailableError: Timeout exceeded without success.
         """
-        if timeout is not None and timeout < 0:
-            timeout = self._api_client.timeout
-        delay = timeout / 100
+        if timeout is None:
+            delay = 2
+        else:
+            if timeout <= 0:
+                timeout = self._api_client.timeout
+            delay = timeout / 100
 
         async def _wake():
             state = await self._api_client.post('vehicles/{}/wake_up'.format(self.id))

@@ -114,4 +114,4 @@ class TeslaApiClient:
         return [_class(self, vehicle) for vehicle in await self.get('vehicles')]
 
     async def list_energy_sites(self, _class=Energy):
-        return [_class(self, products['energy_site_id']) for products in await self.get('products')]
+        return [_class(self, products['energy_site_id']) for products in await self.get('products') if "energy_site_id" in products]

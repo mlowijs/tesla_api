@@ -38,6 +38,12 @@ class TeslaApiClient:
         self._new_token_callback = on_new_token
         self._session = aiohttp.ClientSession()
 
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        await self.close()
+
     async def close(self):
         await self._session.close()
 
@@ -82,11 +88,11 @@ class TeslaApiClient:
             'Authorization': 'Bearer {}'.format(self._token['access_token'])
         }
 
-    async def get(self, endpoint):
+    async def get(self, endpoint, params=None):
         await self.authenticate()
         url = '{}/{}'.format(API_URL, endpoint)
 
-        async with self._session.get(url, headers=self._get_headers()) as resp:
+        async with self._session.get(url, headers=self._get_headers(), params=params) as resp:
             response_json = await resp.json()
 
         if 'error' in response_json:
@@ -114,4 +120,4 @@ class TeslaApiClient:
         return [Vehicle(self, vehicle) for vehicle in await self.get('vehicles')]
 
     async def list_energy_sites(self):
-        return [Energy(self, products['energy_site_id']) for products in await self.get('products')]
+        return [Energy(self, product['energy_site_id']) for product in await self.get('products') if 'energy_site_id' in product]

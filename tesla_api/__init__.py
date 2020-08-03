@@ -18,6 +18,7 @@ OAUTH_CLIENT_SECRET = 'c7257eb71a564034f9419ee651c7d0e5f7aa6bfbd18bafb5c5c033b09
 class TeslaApiClient:
     callback_update = None  # Called when vehicle's state has been updated.
     callback_wake_up = None  # Called when attempting to wake a vehicle.
+    timeout = 30  # Default timeout for operations such as Vehicle.wake_up().
 
     def __init__(self, email=None, password=None, token=None, on_new_token=None):
         """Creates client from provided credentials.
@@ -31,7 +32,6 @@ class TeslaApiClient:
         directly into this constructor.
         """
         assert token is not None or (email is not None and password is not None)
-        assert on_new_token is None or callable(on_new_token)
         self._email = email
         self._password = password
         self._token = json.loads(token) if token else None
@@ -55,7 +55,7 @@ class TeslaApiClient:
 
         # Send token to application via callback.
         if self._new_token_callback:
-            self._new_token_callback(json.dumps(response_json))
+            asyncio.create_task(self._new_token_callback(json.dumps(response_json)))
 
         return response_json
 
@@ -110,8 +110,8 @@ class TeslaApiClient:
 
         return response_json['response']
 
-    async def list_vehicles(self, _class=Vehicle):
-        return [_class(self, vehicle) for vehicle in await self.get('vehicles')]
+    async def list_vehicles(self):
+        return [Vehicle(self, vehicle) for vehicle in await self.get('vehicles')]
 
-    async def list_energy_sites(self, _class=Energy):
-        return [_class(self, products['energy_site_id']) for products in await self.get('products')]
+    async def list_energy_sites(self):
+        return [Energy(self, products['energy_site_id']) for products in await self.get('products')]

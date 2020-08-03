@@ -44,7 +44,7 @@ class Vehicle:
     def _update_vehicle(self, state):
         self._vehicle = state
         if self._api_client.callback_update is not None:
-            self._api_client.callback_update(self)
+            asyncio.create_task(self._api_client.callback_update(self))
 
     async def is_mobile_access_enabled(self):
         return await self._api_client.get('vehicles/{}/mobile_enabled'.format(self.id))
@@ -63,21 +63,35 @@ class Vehicle:
     async def get_gui_settings(self):
         return await self._api_client.get('vehicles/{}/data_request/gui_settings'.format(self.id))
 
-    async def wake_up(self, timeout=30):
+    async def wake_up(self, timeout=-1):
         """Attempt to wake up the car.
 
-        Throws VehicleUnavailableError if timeout seconds passes without success.
-        Otherwise, vehicle will be online when this function returns.
+        Vehicle will be online when this function returns successfully.
+
+        Args:
+            timeout: Seconds to keep attempting wakeup. Set to None to run until complete.
+                Defaults to timeout attribute on TeslaApiClient.
+
+        Raises:
+            VehicleUnavailableError: Timeout exceeded without success.
         """
+        if timeout is None:
+            delay = 2
+        else:
+            if timeout <= 0:
+                timeout = self._api_client.timeout
+            delay = timeout / 100
+
         async def _wake():
-            self._vehicle['state'] = 'offline'
+            state = await self._api_client.post('vehicles/{}/wake_up'.format(self.id))
+            self._update_vehicle(state)
             while self._vehicle['state'] != 'online':
+                await asyncio.sleep(delay)
                 state = await self._api_client.post('vehicles/{}/wake_up'.format(self.id))
                 self._update_vehicle(state)
-                await asyncio.sleep(0.1)
 
         if self._api_client.callback_wake_up is not None:
-            self._api_client.callback_wake_up(self)
+            asyncio.create_task(self._api_client.callback_wake_up(self))
 
         try:
             await asyncio.wait_for(_wake(), timeout)

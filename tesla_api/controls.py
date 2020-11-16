@@ -1,30 +1,49 @@
-import asyncio
 from functools import partialmethod
 
-STATE_VENT = 'vent'
-STATE_CLOSE = 'close'
+from .base import Stub
+from .doors import Doors
+from .misc import cast, mile_to_km
+from .sentry import Sentry
+from .speedlimit import Speedlimit
+from .trunks import Trunks
+from .windows import Windows
 
-class Controls:
+
+class Controls(Stub):
     def __init__(self, vehicle):
-        self._vehicle = vehicle
-        self._api_client = vehicle._api_client
+        self.doors = Doors(vehicle)
+        self.windows = Windows(vehicle)
+        self.speedlimit = Speedlimit(vehicle)
 
     async def _set_sunroof_state(self, state):
-        return await self._vehicle._command('sun_roof_control', {'state': state})
-    vent_sunroof = partialmethod(_set_sunroof_state, STATE_VENT)
-    close_sunroof = partialmethod(_set_sunroof_state, STATE_CLOSE)
+        return await self._vehicle._command("sun_roof_control", {"state": state})
+
+    vent_sunroof = partialmethod(_set_sunroof_state, "vent")
+    close_sunroof = partialmethod(_set_sunroof_state, "close")
 
     async def flash_lights(self):
-        return await self._vehicle._command('flash_lights')
+        """Flash front lights."""
+        return await self._vehicle._command("flash_lights")
 
     async def honk_horn(self):
-        return await self._vehicle._command('honk_horn')
+        """Honk the horn."""
+        return await self._vehicle._command("honk_horn")
 
-    async def open_charge_port(self):
-        return await self._vehicle._command('charge_port_door_open')
+    async def set_valet_mode(self, on: bool = True):
+        """Turn on or off valet mode.
 
-    async def door_lock(self):
-        return await self._vehicle._command('door_lock')
+        Valet Mode limits the car's top speed to 70MPH and 80kW of acceleration power. It also disables Homelink, Bluetooth and Wifi settings, and the ability to disable mobile access to the car. It also hides your favorites, home, and work locations in navigation.
 
-    async def door_unlock(self):
-        return await self._vehicle._command('door_unlock')
+        parameters:
+            on (bool): True to activate, False to deactiveate
+            password (str): A PIN to deactivate Valet Mode
+
+        Note:
+            password parameter isn't required to turn on or off Valet Mode, even with a previous PIN set.
+            If you clear the PIN and activate Valet Mode without the parameter, you will only be able to deactivate it from your car's screen by signing into your Tesla account
+
+
+        """
+        return await self._vehicle._command(
+            "set_valet_mode", data={"on": on, "password": password}
+        )

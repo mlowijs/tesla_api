@@ -1,3 +1,4 @@
+"""Climate"""
 from datetime import datetime
 from functools import partialmethod
 
@@ -15,24 +16,28 @@ class Climate(Stub):
 
     async def start_climate(self):
         """Start climate"""
-        return await self._vehicle._command('auto_conditioning_start')
+        return await self._vehicle._command("auto_conditioning_start")
 
     async def stop_climate(self):
         """Stop climate."""
-        return await self._vehicle._command('auto_conditioning_stop')
+        return await self._vehicle._command("auto_conditioning_stop")
 
     async def enable_max_defrost(self, on: bool = True):
         """Toggles the climate controls between Max Defrost and the previous setting."""
-        return await self._vehicle._command('set_preconditioning_max', data={"on": on})
+        return await self._vehicle._command("set_preconditioning_max", data={"on": on})
 
     disable_max_defrost = partialmethod(enable_max_defrost, on=False)
 
-    async def set_temperature(self, driver_temperature:int, passenger_temperature = None):
+    async def set_temperature(
+        self, driver_temperature: int, passenger_temperature=None
+    ):
         """Set temperatur on the driver and/or passenger side."""
         # check what format this is in.
-        data = {'driver_temp': driver_temperature,
-                'passenger_temp': passenger_temperature or driver_temperature}
-        return await self._vehicle._command('set_temps', data)
+        data = {
+            "driver_temp": driver_temperature,
+            "passenger_temp": passenger_temperature or driver_temperature,
+        }
+        return await self._vehicle._command("set_temps", data)
 
     async def set_seat_heater(self, temp: int = 0, seat: int = 0):
         # temp = The desired level for the heater. (0-3)
@@ -42,16 +47,18 @@ class Climate(Stub):
         # 2 - Rear left
         # 4 - Rear center
         # 5 - Rear right
-        return await self._vehicle._command('remote_seat_heater_request',
-                                            {'heater': seat, 'level': temp})
+        return await self._vehicle._command(
+            "remote_seat_heater_request", {"heater": seat, "level": temp}
+        )
 
     async def steering_wheel_heater(self, on: bool = True):
         """"Turn on or off teh steering wheel heater"""
-        return await self._vehicle._command('remote_steering_wheel_heater_request', {'on': on})
+        return await self._vehicle._command(
+            "remote_steering_wheel_heater_request", {"on": on}
+        )
 
     start_steering_wheel_heater = partialmethod(steering_wheel_heater, True)
     stop_steering_wheel_heater = partialmethod(steering_wheel_heater, False)
-
 
     @property
     def battery_heater(self):
@@ -62,15 +69,15 @@ class Climate(Stub):
         return self._vehicle._data[self.__key]["battery_heater_no_power"]
 
     @property
-    def climate_keeper_mode(self): # should be bool? is this camping mode?
+    def climate_keeper_mode(self):  # should be bool? is this camping mode?
         return self._vehicle._data[self.__key]["climate_keeper_mode"]
 
     @property
-    def defrost_mode(self): # should be bool? is this defrost mode?
+    def defrost_mode(self):  # should be bool? is this defrost mode?
         return self._vehicle._data[self.__key]["defrost_mode"]
 
     @property
-    def driver_temp_setting(self) -> float: # should be bool? is this defrost mode?
+    def driver_temp_setting(self) -> float:  # should be bool? is this defrost mode?
         return self._vehicle._data[self.__key]["driver_temp_setting"]
 
     @property
@@ -84,7 +91,6 @@ class Climate(Stub):
     @property
     def is_auto_conditioning_on(self) -> bool:
         return self._vehicle._data[self.__key]["is_auto_conditioning_on"]
-
 
     @property
     def is_climate_on(self) -> bool:
@@ -157,9 +163,6 @@ class Climate(Stub):
     @property
     def wiper_blade_heater(self) -> bool:
         return self._vehicle._data[self.__key]["wiper_blade_heater"]
-
-
-
 
     @property
     def last_update(self) -> datetime:

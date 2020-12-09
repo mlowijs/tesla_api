@@ -14,12 +14,12 @@ from .controls import Controls
 from .exceptions import ApiError, ParameterError, VehicleUnavailableError
 from .gui import Gui
 from .media import Media
-from .misc import Dict, cast
+from .misc import Dict
 from .state import State
 
 _LOGGER = logging.getLogger(__name__)
 
-class Vehicle(Base):
+class Vehicle:
 
     """Main interface for everything relating to the vehicle.
 
@@ -28,6 +28,8 @@ class Vehicle(Base):
         climate (TYPE): Description
         controls (TYPE): Description
         media (TYPE): Description
+        gui (TYPE): Descrition
+        config (TYPE)
     """
 
     def __init__(self, api_client: "TeslaApiClient", data: {}, lock=Optional[Union[None, asyncio.Lock]]):
@@ -85,7 +87,7 @@ class Vehicle(Base):
         async with self._session.get(url, params=params) as resp:
             img = await resp.read()
             return img
-
+    '''
     @property
     def center_display(self):
         """What is on the screen (center display) now.
@@ -102,8 +104,9 @@ class Vehicle(Base):
         }
 
         return cd[self._data["vehicle_state"]["center_display_state"]]
+    '''
 
-    async def adress(self, lat=None, lon=None, service="nominatim"):
+    async def address(self, lat=None, lon=None, service="nominatim"):
         """Find the street adresse the car is on
 
         Args:
@@ -116,7 +119,8 @@ class Vehicle(Base):
             from geopy.geocoders import Nominatim, get_geocoder_for_service
             from geopy.adapters import AioHTTPAdapter
         except ImportError:
-            raise
+            _LOGGER.debug("Can't find the current addresse without geopy")
+            return
 
         service = get_geocoder_for_service(service)
         lat = lat or self._data["drive_state"]["latitude"]
@@ -184,6 +188,10 @@ class Vehicle(Base):
         if self._api_client.callback_update is not None:
             asyncio.create_task(self._api_client.callback_update(self))
 
+    async def nearby_charging_sites(self):
+        """Get nearby charging sites"""
+        return await self._api_client.get(f"vehicles/{self.id}/nearby_charging_sites")
+
     async def is_mobile_access_enabled(self):
         """
 
@@ -229,7 +237,7 @@ class Vehicle(Base):
         Returns:
             dict:
         """
-        data =  await self._api_client.get(
+        data = await self._api_client.get(
             f"vehicles/{self.id}/data_request/drive_state"
         )
 

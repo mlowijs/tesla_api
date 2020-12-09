@@ -1,4 +1,3 @@
-from functools import partialmethod
 
 from .base import Stub
 from .misc import cast
@@ -34,5 +33,5 @@ class Windows(Stub):
         return cast(self._vehicle._data["vehicle_state"]["rd_window"])
 
     @property
-    def rear_passenger_door_open(self) ->:
+    def rear_passenger_door_open(self) -> bool:
         return cast(self._vehicle._data["vehicle_state"]["rp_window"])

@@ -2,7 +2,6 @@ from functools import partialmethod
 
 from .base import Stub
 from .doors import Doors
-from .misc import cast, mile_to_km
 from .sentry import Sentry
 from .speedlimit import Speedlimit
 from .trunks import Trunks
@@ -11,9 +10,12 @@ from .windows import Windows
 
 class Controls(Stub):
     def __init__(self, vehicle):
+        super().__init__(vehicle)
         self.doors = Doors(vehicle)
         self.windows = Windows(vehicle)
         self.speedlimit = Speedlimit(vehicle)
+        self.trunks = Trunks(vehicle)
+        self.sentry = Sentry(vehicle)
 
     async def _set_sunroof_state(self, state):
         return await self._vehicle._command("sun_roof_control", {"state": state})
@@ -29,7 +31,7 @@ class Controls(Stub):
         """Honk the horn."""
         return await self._vehicle._command("honk_horn")
 
-    async def set_valet_mode(self, on: bool = True):
+    async def set_valet_mode(self, on: bool = True, password=""):
         """Turn on or off valet mode.
 
         Valet Mode limits the car's top speed to 70MPH and 80kW of acceleration power. It also disables Homelink, Bluetooth and Wifi settings, and the ability to disable mobile access to the car. It also hides your favorites, home, and work locations in navigation.
@@ -44,6 +46,7 @@ class Controls(Stub):
 
 
         """
+        pwd = password or self._vehicle._api_client._password
         return await self._vehicle._command(
             "set_valet_mode", data={"on": on, "password": password}
         )

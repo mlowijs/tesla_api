@@ -15,6 +15,4 @@ def client():
 
 @pytest.fixture()
 def vehicle(client, mocker):
-    #mocker.patch.object(client.get_vehicle, Vehicle(client, FULL_DATA))
-
     return Vehicle(client, FULL_DATA)

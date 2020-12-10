@@ -6,11 +6,15 @@ from .misc import cast, mile_to_km
 
 class Doors(Stub):
 
-    async def lock_door(self):
+    async def lock(self):
         return await self._vehicle._command("door_lock")
 
-    async def unlock_door(self):
+    async def unlock(self):
         return await self._vehicle._command("door_unlock")
+
+    @property
+    def locked(self):
+        return self._vehicle._data["vehicle_state"]["locked"]
 
     @property
     def front_driver_door_open(self):

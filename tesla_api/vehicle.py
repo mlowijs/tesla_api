@@ -180,6 +180,8 @@ class Vehicle:
         if res.get("result") is not True:
             raise ApiError(res.get("reason", ""))
 
+        return True
+
     def _update_vehicle(self, state):
         """This should proable be changed.
 

@@ -14,8 +14,8 @@ async def test_Vehicle_Status(vehicle):
     assert status.native_longitude == 7.981791
     assert status.native_type == "wgs"
     assert status.power == 0
-    assert status.shift_state == None
-    assert status.speed == None
+    assert status.shift_state is None
+    assert status.speed is None
 
 
 # Add methods.

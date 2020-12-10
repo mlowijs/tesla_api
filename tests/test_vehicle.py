@@ -18,5 +18,11 @@ async def test_Vehicle_attributes(vehicle):
     assert vehicle.tokens == ['dae9f13e1889e1e1', '1ad6b8d43a795273']
     assert vehicle.vin == "5YJ3E7EB4LF999999"
 
+    with pytest.raises(AttributeError):
+        assert vehicle.non_existing_att
 
-# Add test for methods here.
+    with pytest.raises(KeyError):
+        assert vehicle._data["looooool"]
+
+
+# methods.

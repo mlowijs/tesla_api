@@ -6,7 +6,7 @@ from collections import defaultdict
 from datetime import datetime, timezone
 from typing import Optional, Union
 
-from .base import Base, Stub
+from .base import Stub
 from .charge import Charge
 from .climate import Climate
 from .config import Config
@@ -18,6 +18,7 @@ from .misc import Dict
 from .state import State
 
 _LOGGER = logging.getLogger(__name__)
+
 
 class Vehicle:
 
@@ -32,7 +33,7 @@ class Vehicle:
         config (TYPE)
     """
 
-    def __init__(self, api_client: "TeslaApiClient", data: {}, lock=Optional[Union[None, asyncio.Lock]]):
+    def __init__(self, api_client: "TeslaApiClient", data: Dict = Dict, lock: Optional[Union[None, asyncio.Lock]] = None):
         """Summary
 
         Args:
@@ -42,6 +43,8 @@ class Vehicle:
         """
         if lock is None:
             self._lock = asyncio.Lock()
+        else:
+            self._lock = lock
 
         self._api_client = api_client
         self._data = Dict(data)
@@ -207,6 +210,7 @@ class Vehicle:
             TYPE: Description
         """
         data = await self._api_client.get(f"vehicles/{self.id}/vehicle_data")
+        _LOGGER.info(self._lock)
         async with self._lock:
             self._data.update(data)
         # Wft is this used for anyway?

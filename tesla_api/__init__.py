@@ -146,6 +146,8 @@ class TeslaApiClient:
         return response_json["response"]
 
     async def list_vehicles(self):
+        v = await self.get("vehicles")
+        _LOGGER.debug("%s", v)
         return [Vehicle(self, vehicle) for vehicle in await self.get("vehicles")]
 
     async def get_vehicle(self, name):

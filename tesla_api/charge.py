@@ -51,12 +51,12 @@ class Charge(Stub):
 
     @property
     def battery_level(self) -> bool:
-        return self._vehicle._data["charge_state"]["level"]
+        return self._vehicle._data["charge_state"]["battery_level"]
 
     @property
     def soc(self) -> bool:
         """Just a alias for battery level."""
-        return self._data["charge_state"]["battery_heater_on"]
+        return self._vehicle._data["charge_state"]["battery_heater_on"]
 
     @property
     def battery_range(self) -> float:

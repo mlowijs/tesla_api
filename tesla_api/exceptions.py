@@ -1,4 +1,4 @@
-from aiohttp.client_exceptions import ClientConnectorError as ClientError
+from aiohttp.client_exceptions import ClientConnectionError as ClientError
 
 class AuthenticationError(Exception):
     def __init__(self, error: object):

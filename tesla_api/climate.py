@@ -2,7 +2,7 @@
 from datetime import datetime
 from functools import partialmethod
 
-from .base import Base, Stub
+from .base import Stub
 
 
 class Climate(Stub):

@@ -1,5 +1,3 @@
-
-
 class Stub:
 
     def __init__(self, vehicle):
@@ -7,10 +5,6 @@ class Stub:
         self._api_client = vehicle._api_client
 
     async def refresh(self):
-        # select a name and stick with it.
+        # Refresh for all stubs, if the child has a way to only pull info that
+        # related to there class that should be used instead.
         await self._vehicle.full_update()
-
-
-class Base:
-    def __init__(self, data):
-        self._data = data

@@ -90,24 +90,6 @@ class Vehicle:
         async with self._session.get(url, params=params) as resp:
             img = await resp.read()
             return img
-    '''
-    @property
-    def center_display(self):
-        """What is on the screen (center display) now.
-
-        Returns:
-            TYPE: Description
-        """
-        cd = {
-            0: "off",
-            2: "normal on",
-            3: "charging screen",
-            7: "sentry mode",
-            8: "dog mode",
-        }
-
-        return cd[self._data["vehicle_state"]["center_display_state"]]
-    '''
 
     async def address(self, lat=None, lon=None, service="nominatim"):
         """Find the street adresse the car is on
@@ -212,9 +194,8 @@ class Vehicle:
             TYPE: Description
         """
         data = await self._api_client.get(f"vehicles/{self.id}/vehicle_data")
-        _LOGGER.info(self._lock)
         async with self._lock:
-            self._data.update(data)
+            self._data["vehicle_data"].update(data)
         # Wft is this used for anyway?
         self._update_vehicle({k: v for k, v in data.items()})
         return self._data
@@ -285,7 +266,8 @@ class Vehicle:
 
         async def _wake():
             """Summary"""
-            state = await self._api_client.post(f"vehicles/{self.id}/wake_up")
+            part_url = f"vehicles/{self.id}/wake_up"
+            state = await self._api_client.post(part_url)
             self._update_vehicle(state)
             while self._data["state"] != "online":
                 await asyncio.sleep(delay)

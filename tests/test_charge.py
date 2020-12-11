@@ -50,3 +50,47 @@ async def test_Vehicle_Charge_attributes(vehicle):
     assert charge.usable_battery_level == 60
     assert charge.user_charge_enable_request is None
     assert charge.voltage == 2
+
+
+@pytest.mark.asyncio
+async def test_Vehicle_Charge_open_charge_port(vehicle):
+    charge = vehicle.charge
+    assert await charge.open_charge_port() is True
+
+
+@pytest.mark.asyncio
+async def test_Vehicle_Charge_close_charge_port(vehicle):
+    charge = vehicle.charge
+    assert await charge.close_charge_port() is True
+
+
+@pytest.mark.asyncio
+async def test_Vehicle_Charge_set_charge_limit(vehicle):
+    charge = vehicle.charge
+
+    with pytest.raises(ValueError):
+        assert await charge.set_charge_limit(1337)
+
+    assert await charge.set_charge_limit(69) is True
+
+
+@pytest.mark.asyncio
+async def test_Vehicle_Charge_set_standard_range_limit(vehicle):
+    charge = vehicle.charge
+    assert await charge.set_standard_range_limit() is True
+
+
+@pytest.mark.asyncio
+async def test_Vehicle_Charge_set_max_range_limit(vehicle):
+    charge = vehicle.charge
+    assert await charge.set_max_range_limit() is True
+
+@pytest.mark.asyncio
+async def test_Vehicle_Charge_start_charging(vehicle):
+    charge = vehicle.charge
+    assert await charge.start_charging() is True
+
+@pytest.mark.asyncio
+async def test_Vehicle_Charge_stop_charging(vehicle):
+    charge = vehicle.charge
+    assert await charge.stop_charging() is True

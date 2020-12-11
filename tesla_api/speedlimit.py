@@ -25,7 +25,7 @@ class Speedlimit(Stub):
         return self._vehicle._format_distance_unit(self.max_limit_mph)
 
     @property
-    def pin_clode_set(self):
+    def pin_code_set(self):
         return self._vehicle._data["vehicle_state"]["speed_limit_mode"]["pin_code_set"]
 
     async def set_speed_limit(self, limit: int):

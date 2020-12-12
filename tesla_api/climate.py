@@ -37,7 +37,7 @@ class Climate(Stub):
             "driver_temp": driver_temperature,
             "passenger_temp": passenger_temperature or driver_temperature,
         }
-        return await self._vehicle._command("set_temps", data)
+        return await self._vehicle._command("set_temps", data=data)
 
     async def set_seat_heater(self, temp: int = 0, seat: int = 0):
         """Turn on the seat heater.

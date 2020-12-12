@@ -52,6 +52,12 @@ class Climate(Stub):
                 4 - Rear center
                 5 - Rear right
         """
+        if not (0 <= temp <= 3):
+            raise ValueError("Temp must in 0-3")
+
+        if not (0 <= seat <= 5):
+            raise ValueError("Seat must in 0-5")
+
         return await self._vehicle._command(
             "remote_seat_heater_request", {"heater": seat, "level": temp}
         )
@@ -123,18 +129,22 @@ class Climate(Stub):
 
     @property
     def max_avail_temp(self) -> int:
+        """Maximum available temperature."""
         return self._vehicle._data[self.__key]["max_avail_temp"]
 
     @property
     def min_avail_temp(self) -> int:
+        """Minimum available temperature."""
         return self._vehicle._data[self.__key]["min_avail_temp"]
 
     @property
     def outside_temp(self) -> float:
+        """Outside temperature."""
         return self._vehicle._data[self.__key]["outside_temp"]
 
     @property
     def passenger_temp_setting(self) -> float:
+        """Passenger temperature setting"""
         return self._vehicle._data[self.__key]["passenger_temp_setting"]
 
     @property
@@ -147,6 +157,8 @@ class Climate(Stub):
 
     @property
     def seat_heater_left(self) -> int:
+        # Should this be driver / passanger
+        # we can check if the car is right hand drive in the config
         return self._vehicle._data[self.__key]["seat_heater_left"]
 
     @property
@@ -167,6 +179,7 @@ class Climate(Stub):
 
     @property
     def side_mirror_heaters(self) -> bool:
+        """Side mirror heaters on."""
         return self._vehicle._data[self.__key]["side_mirror_heaters"]
 
     @property

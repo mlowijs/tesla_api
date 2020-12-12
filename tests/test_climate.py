@@ -31,3 +31,14 @@ async def test_Vehicle_Climate_attributes(vehicle):
     assert climate.seat_heater_right == 0
     assert climate.side_mirror_heaters is False
     assert climate.wiper_blade_heater is False
+
+
+
+@pytest.mark.asyncio
+async def test_Vehicle_Climate_set_seat_heater(vehicle):
+
+    with pytest.raises(ValueError):
+        await vehicle.climate.set_seat_heater(-1)
+        await vehicle.climate.set_seat_heater(seat=99)
+
+    await vehicle.climate.set_seat_heater(temp=3, seat=0)

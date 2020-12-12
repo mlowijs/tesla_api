@@ -5,7 +5,7 @@ import pytest
 async def test_Vehicle_Climate_attributes(vehicle):
     climate = vehicle.climate
     assert climate.battery_heater is False
-    assert climate.battery_heater_no_power is None
+    assert climate.battery_heater_no_power is False
     assert climate.climate_keeper_mode == "off"
     assert climate.defrost_mode == 0
     assert climate.driver_temp_setting == 20.5

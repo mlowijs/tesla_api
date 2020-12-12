@@ -40,19 +40,24 @@ class Climate(Stub):
         return await self._vehicle._command("set_temps", data)
 
     async def set_seat_heater(self, temp: int = 0, seat: int = 0):
-        # temp = The desired level for the heater. (0-3)
-        # The desired seat to heat. (0-5)
-        # 0 - Driver
-        # 1 - Passenger
-        # 2 - Rear left
-        # 4 - Rear center
-        # 5 - Rear right
+        """Turn on the seat heater.
+
+        Args:
+            temp (int): The desired level for the header 0-3
+            seat (int): What seat to enable.
+
+                0 - Driver
+                1 - Passenger
+                2 - Rear left
+                4 - Rear center
+                5 - Rear right
+        """
         return await self._vehicle._command(
             "remote_seat_heater_request", {"heater": seat, "level": temp}
         )
 
     async def steering_wheel_heater(self, on: bool = True):
-        """"Turn on or off teh steering wheel heater"""
+        """"Turn on or off the steering wheel heater"""
         return await self._vehicle._command(
             "remote_steering_wheel_heater_request", {"on": on}
         )
@@ -62,18 +67,22 @@ class Climate(Stub):
 
     @property
     def battery_heater(self):
+        """Is the battery heater on."""
         return self._vehicle._data[self.__key]["battery_heater"]
 
     @property
-    def battery_heater_no_power(self):
-        return self._vehicle._data[self.__key]["battery_heater_no_power"]
+    def battery_heater_no_power(self) -> bool:
+        """If the soc is to low on enable the battery heater."""
+        return bool(self._vehicle._data[self.__key]["battery_heater_no_power"])
 
     @property
-    def climate_keeper_mode(self):  # should be bool? is this camping mode?
+    def climate_keeper_mode(self) -> str:
+        """Climate keeper mode."""
         return self._vehicle._data[self.__key]["climate_keeper_mode"]
 
     @property
-    def defrost_mode(self):  # should be bool? is this defrost mode?
+    def defrost_mode(self):
+        """Defrost mode"""
         return self._vehicle._data[self.__key]["defrost_mode"]
 
     @property
@@ -162,9 +171,11 @@ class Climate(Stub):
 
     @property
     def wiper_blade_heater(self) -> bool:
+        """Returs True if the wiper blade heater is on."""
         return self._vehicle._data[self.__key]["wiper_blade_heater"]
 
     @property
     def last_update(self) -> datetime:
+        """Last update."""
         value = self._vehicle._data[self.__key]["timestamp"]
         return datetime.utcfromtimestamp(value / 1000)

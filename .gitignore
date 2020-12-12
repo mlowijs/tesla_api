@@ -5,3 +5,5 @@ test.py
 build/
 tesla_api.egg-info/
 dist/
+
+*.sqlite3

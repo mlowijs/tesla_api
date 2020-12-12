@@ -1,7 +1,17 @@
-from setuptools import setup, find_packages
+import platform
+
+from setuptools import find_packages, setup
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
+
+
+packages = ["aiohttp"]
+
+dev = ["pytest", "pytest-mock", "pytest-monkeytype"]
+
+if platform.python_version_tuple()[:2] <= ("3", "8"):
+    dev.append("asynctest")
 
 setup(
     name="tesla_api",
@@ -18,7 +28,6 @@ setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    install_requires=[
-        "aiohttp"   
-    ]
+    install_requires=packages,
+    extras_require={"dev": dev},
 )

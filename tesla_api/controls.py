@@ -48,5 +48,5 @@ class Controls(Stub):
         """
         pwd = password or self._vehicle._api_client._password
         return await self._vehicle._command(
-            "set_valet_mode", data={"on": on, "password": password}
+            "set_valet_mode", data={"on": on, "password": pwd}
         )

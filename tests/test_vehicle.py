@@ -25,4 +25,80 @@ async def test_Vehicle_attributes(vehicle):
         assert vehicle._data["looooool"]
 
 
-# methods.
+
+
+@pytest.mark.asyncio
+async def _test_Vehicle_get_charge_state(vehicle):
+    data = await vehicle.get_charge_state()
+    # think the path dont work here.
+    assert isinstance(data, dict)
+
+
+@pytest.mark.asyncio
+async def _test_Vehicle_get_climate_state(vehicle):
+    data = await vehicle.get_climate_state()
+    # think the path dont work here.
+    assert isinstance(data, dict)
+
+
+
+@pytest.mark.asyncio
+async def test_Vehicle_compose_image(vehicle): # TEST AND FIXME
+    data = await vehicle.compose_image("STUD_SIDE")
+
+
+@pytest.mark.asyncio
+async def test_Vehicle_address(vehicle):
+    # lat lon to the royal palace in Oslo.
+    data = await vehicle.address(59.916911, 10.727567)
+    assert "Det kongelige slott" in data
+
+
+@pytest.mark.asyncio
+async def test_Vehicle_nearby_charging_sites(vehicle):
+    #data = await vehicle.nearby_charging_sites()
+    pass
+
+@pytest.mark.asyncio
+async def test_Vehicle_is_mobile_access_enabled(vehicle):
+    #data = await vehicle.is_mobile_access_enabled()
+    pass
+
+
+@pytest.mark.asyncio
+async def test_Vehicle_get_data(vehicle):
+    pass
+
+
+@pytest.mark.asyncio
+async def test_Vehicle_full_update(vehicle):
+    pass
+
+@pytest.mark.asyncio
+async def test_Vehicle_get_state(vehicle):
+    pass
+
+
+@pytest.mark.asyncio
+async def test_Vehicle_get_drive_state(vehicle):
+    pass
+
+@pytest.mark.asyncio
+async def test_Vehicle_get_gui_settings(vehicle):
+    pass
+
+
+@pytest.mark.asyncio
+async def test_Vehicle_wake_up(vehicle):
+    pass
+
+
+@pytest.mark.asyncio
+async def test_Vehicle_remote_start(vehicle):
+    pass
+
+
+@pytest.mark.asyncio
+async def test_Vehicle_update(vehicle):
+    pass
+    # dunno wtf this does, just the attr so the car?

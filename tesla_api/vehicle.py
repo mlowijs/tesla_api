@@ -58,13 +58,13 @@ class Vehicle:
         self.config = Config(self)
 
     async def get_charge_state(self):
-        data = await self._api_client.get(f'vehicles/{self._vehicle.id}/data_request/charge_state')
+        data = await self._api_client.get(f'vehicles/{self.id}/data_request/charge_state')
         async with self._lock:
             self._data["charge_state"].update(data)
         return data
 
     async def get_climate_state(self):
-        data = await self._api_client.get(f'vehicles/{self._vehicle.id}/data_request/climate_state')
+        data = await self._api_client.get(f'vehicles/{self.id}/data_request/climate_state')
         async with self._lock:
             self._data["climate_state"].update(data)
         return data
@@ -304,9 +304,8 @@ class Vehicle:
 
         return await self._command("remote_start_drive", data={"password": password})
 
-    async def update(self):
-        """Summary
-        """
+    async def update(self): # Should this be refresh.
+        """Summary"""
         resp = await self._api_client.get(f"vehicles/{self.id}")
         async with self._lock:
             self._update_vehicle(resp)
@@ -316,6 +315,7 @@ class Vehicle:
         return self._data["vin"]
 
     def _format_distance_unit(self, value) -> float:
+        # Use the helper.
         distance_format = self._data["gui_settings"]["gui_distance_units"]
 
         if distance_format == "km/hr":

@@ -52,6 +52,15 @@ async def test_Vehicle_Charge_attributes(vehicle):
     assert charge.voltage == 2
 
 
+
+@pytest.mark.asyncio
+async def test_Vehicle_Charge_refresh(vehicle):
+    charge = vehicle.charge
+
+    data = await charge.refresh()
+    assert isinstance(data, dict)
+
+
 @pytest.mark.asyncio
 async def test_Vehicle_Charge_open_charge_port(vehicle):
     charge = vehicle.charge

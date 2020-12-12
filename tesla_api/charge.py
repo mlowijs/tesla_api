@@ -18,10 +18,6 @@ class Charge(Stub):
         """Close charge port."""
         return await self._vehicle._command("charge_port_door_close")
 
-    async def update(self):
-        """Alias for get_state"""
-        return await self.get_state()
-
     async def start_charging(self):
         """Start charging."""
         return await self._vehicle._command("charge_start")

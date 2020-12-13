@@ -23,5 +23,5 @@ async def test_Vehicle_Status(vehicle):
 @pytest.mark.asyncio
 async def test_Vehicle_Status_refresh(client, mocker):
     v = vehi(client, mocker, DRIVE_STATE)
-    r = await v.get_climate_state()
+    r = await v.status.refresh()
     assert isinstance(r, dict)

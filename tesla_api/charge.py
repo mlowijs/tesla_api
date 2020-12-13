@@ -124,7 +124,7 @@ class Charge(Stub):
 
     @property
     def charge_to_max_range(self):
-        """The the max charge range to 100%."""
+        """The max charge range to 100%."""
         return self._vehicle._data["charge_state"]["charge_to_max_range"]
 
     @property

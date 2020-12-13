@@ -2,6 +2,7 @@
 import pytest
 from conftest import vehi
 from data import *
+from PIL import Image
 
 
 @pytest.mark.asyncio
@@ -15,7 +16,7 @@ async def test_Vehicle_attributes(vehicle):
     assert vehicle.id_s == "999999999999"
     assert vehicle.in_service is False
     assert str(vehicle.last_update.date()) == "2020-11-18"
-    assert vehicle.odometer == 1024.1678860374077
+    assert vehicle.odometer == 2652.51
     assert vehicle.state == "online"
     assert vehicle.tokens == ['dae9f13e1889e1e1', '1ad6b8d43a795273']
     assert vehicle.vin == "5YJ3E7EB4LF999999"
@@ -32,20 +33,22 @@ async def test_Vehicle_attributes(vehicle):
 async def test_Vehicle_get_charge_state(client, mocker):
     v = vehi(client, mocker, CHARGE_STATE)
     r = await v.get_charge_state()
-    assert isinstance(r, dict)
+    assert r == CHARGE_STATE
 
 
 @pytest.mark.asyncio
 async def test_Vehicle_get_climate_state(client, mocker):
     v = vehi(client, mocker, CLIMATE_STATE)
     r = await v.get_climate_state()
-    assert isinstance(r, dict)
+    assert r == CLIMATE_STATE
 
 
 @pytest.mark.asyncio
-@pytest.mark.skip(reason="Raises exception but work")
-async def test_Vehicle_compose_image(vehicle): # TEST AND FIXME
+@pytest.mark.xfail
+async def test_Vehicle_compose_image(vehicle):
+    # This test works when i test it manually but fails in the suit.
     data = await vehicle.compose_image("STUD_SIDE")
+    assert len(data)
 
 
 @pytest.mark.asyncio
@@ -93,8 +96,6 @@ async def test_Vehicle_get_drive_state(client, mocker):
     v = vehi(client, mocker, DRIVE_STATE)
     r = await v.get_data()
     assert isinstance(r, dict)
-
-
 
 
 @pytest.mark.asyncio

@@ -16,7 +16,7 @@ from .controls import Controls
 from .exceptions import ApiError, VehicleUnavailableError
 from .gui import Gui
 from .media import Media
-from .misc import Dict
+from .misc import Dict, mile_to_km
 from .state import State
 
 _LOGGER = logging.getLogger(__name__)
@@ -360,7 +360,7 @@ class Vehicle:
         distance_format = self._data["gui_settings"]["gui_distance_units"]
 
         if distance_format == "km/hr":
-            value = value / 1.6093
+            value = mile_to_km(value)
 
         return value
 

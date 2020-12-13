@@ -1,4 +1,6 @@
 import pytest
+from conftest import vehi
+from data import *
 
 
 @pytest.mark.asyncio
@@ -34,10 +36,18 @@ async def test_Vehicle_Climate_attributes(vehicle):
 
 
 @pytest.mark.asyncio
+async def test_Vehicle_refresh(client, mocker):
+    v = vehi(client, mocker, CLIMATE_STATE)
+    data = await v.climate.refresh()
+    assert data == CLIMATE_STATE
+
+
+@pytest.mark.asyncio
 async def test_Vehicle_Climate_set_seat_heater(vehicle):
 
     with pytest.raises(ValueError):
         await vehicle.climate.set_seat_heater(-1)
+    with pytest.raises(ValueError):
         await vehicle.climate.set_seat_heater(seat=99)
 
     await vehicle.climate.set_seat_heater(temp=3, seat=0)

@@ -4,7 +4,7 @@ from conftest import vehi
 
 def test_Vehicle_Controls_Speedlimit_attributes(vehicle):
     speedlimit = vehicle.controls.speedlimit
-    assert speedlimit.current_limit == 52.81799540172746
+    assert speedlimit.current_limit == 136.79
     assert speedlimit.current_limit_mph == 85.0
     assert speedlimit.is_active is False
     assert speedlimit.max_limit_mph == 90
@@ -31,7 +31,10 @@ async def test_Vehicle_Controls_Speedlimit_set_speed_limit(client, mocker):
     with pytest.raises(ValueError):
         await speedlimit.set_speed_limit(99999)
 
-    await speedlimit.set_speed_limit(90)
+
+    with pytest.raises(KeyError):
+        v._data.pop("gui_settings")
+        await speedlimit.set_speed_limit(90)
 
 
 @pytest.mark.asyncio

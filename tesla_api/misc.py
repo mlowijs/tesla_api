@@ -12,12 +12,12 @@ class Dict(dict):
 
 def mile_to_km(value):
     """Convert from mile to km"""
-    return value * 1.6093
+    return round(value * 1.609344, 2)
 
 
 def km_to_mile(value):
     """Convert from km to mile"""
-    return value * 0.621371
+    return round(value * 0.621371192, 2)
 
 
 def c_to_f(value):

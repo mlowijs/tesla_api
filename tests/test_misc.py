@@ -3,7 +3,7 @@ from tesla_api.misc import c_to_f, cast, km_to_mile, mile_to_km
 
 
 def test_km_to_mile():
-    assert km_to_mile(1) == 0.621371
+    assert km_to_mile(1) == 0.62
 
 
 def test_mile_to_km():

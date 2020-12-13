@@ -7,4 +7,4 @@ class Stub:
     async def refresh(self):
         # Refresh for all stubs, if the child has a way to only pull info that
         # related to there class overwritten.
-        await self._vehicle.full_update()
+        return await self._vehicle.full_update()

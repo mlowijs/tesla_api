@@ -11,7 +11,7 @@ class State(Stub):
     __key = "drive_state"
 
     async def refresh(self):
-        await self._vehicle.get_drive_state()
+        return await self._vehicle.get_drive_state()
 
     @property
     def gps_last_update(self) -> datetime:

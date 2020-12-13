@@ -61,6 +61,7 @@ class TeslaApiClient:
         # Only clean up the session if it was created by us.
         if self._own_session is True:
             await self._session.close()
+            await asyncio.sleep(500)
 
     async def _get_token(self, data):
         request_data = {

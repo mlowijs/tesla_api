@@ -17,7 +17,7 @@ class Doors(Stub):
         return self._vehicle._data["vehicle_state"]["locked"]
 
     @property
-    def front_driver_door_open(self):
+    def driver_door_open(self):
         return cast(self._vehicle._data["vehicle_state"]["df"])
 
     @property
@@ -25,7 +25,7 @@ class Doors(Stub):
         return cast(self._vehicle._data["vehicle_state"]["dr"])
 
     @property
-    def front_passanger_door_open(self):
+    def passenger_door_open(self):
         return cast(self._vehicle._data["vehicle_state"]["pf"])
 
     @property

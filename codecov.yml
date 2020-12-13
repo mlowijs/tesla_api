@@ -1,0 +1,7 @@
+codecov:
+
+coverage:
+  status:
+    project:
+      default:
+        target: auto

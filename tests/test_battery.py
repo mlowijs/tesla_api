@@ -1,6 +1,6 @@
 
 
-def test_battery(vehicle):
+def test_Vehicle_Battery_attributes(vehicle):
     battery = vehicle.battery
     assert battery.estimated_range == 140.2
     assert battery.heater_on is False

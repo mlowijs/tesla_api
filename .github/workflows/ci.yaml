@@ -1,6 +1,6 @@
 name: Test tesla_api
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
   build:

@@ -8,7 +8,14 @@ with open("README.md", "r") as fh:
 
 packages = ["aiohttp"]
 
-dev = ["pytest", "pytest-mock", "pytest-monkeytype", "geopy", "pytest-asyncio"]
+dev = [
+    "pytest",
+    "pytest-mock",
+    "pytest-monkeytype",
+    "geopy",
+    "pytest-asyncio",
+    "pytest-cov",
+]
 
 if platform.python_version_tuple()[:2] <= ("3", "8"):
     dev.append("asynctest")

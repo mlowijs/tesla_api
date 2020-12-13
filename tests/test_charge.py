@@ -6,9 +6,6 @@ from conftest import CHARGE_STATE, vehi
 async def test_Vehicle_Charge_attributes(vehicle):
     charge = vehicle.charge
     assert charge.actual_current == 0
-    assert charge.battery_heater_on is False
-    assert charge.battery_level == 60
-    assert charge.battery_range == 185.92
     assert charge.charge_current_request == 16
     assert charge.charge_current_request_max == 16
     assert charge.charge_enable_request is True
@@ -33,22 +30,18 @@ async def test_Vehicle_Charge_attributes(vehicle):
     assert charge.fast_charger_present is False
     assert charge.fast_charger_type == "<invalid>"
     assert str(charge.fully_charged_at.date()) == "2020-11-18"
-    assert charge.ideal_battery_range == 185.92
     assert charge.managed_charging_active is False
     assert charge.managed_charging_start_time is None
     assert charge.managed_charging_user_canceled is False
     assert charge.max_range_charge_counter == 0
     assert charge.minutes_to_full_charge == 0
-    assert charge.not_enough_power_to_heat is None
     assert charge.phases is None
     assert charge.pilot_current == 16
     assert charge.power == 0
     assert charge.scheduled_charging_pending is False
     assert charge.scheduled_charging_start_time is None
-    assert charge.soc is False
     assert str(charge.timestamp.date()) == "2020-11-18"
     assert charge.trip_charging is False
-    assert charge.usable_battery_level == 60
     assert charge.user_charge_enable_request is None
     assert charge.voltage == 2
 

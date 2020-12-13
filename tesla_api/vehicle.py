@@ -8,6 +8,7 @@ from datetime import datetime, timezone
 from typing import Optional, Union
 
 from .base import Stub
+from .battery import Battery
 from .charge import Charge
 from .climate import Climate
 from .config import Config
@@ -56,6 +57,7 @@ class Vehicle:
         self._data = Dict(data)
 
         self.charge = Charge(self)
+        self.battery = Battery(self)
         self.climate = Climate(self)
         self.controls = Controls(self)
         self.media = Media(self)

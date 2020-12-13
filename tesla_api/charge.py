@@ -41,22 +41,6 @@ class Charge(Stub):
 
         return await self._vehicle._command("set_charge_limit", {"percent": percentage})
 
-    @property
-    def battery_heater_on(self) -> bool:
-        return self._vehicle._data["charge_state"]["battery_heater_on"]
-
-    @property
-    def battery_level(self) -> bool:
-        return self._vehicle._data["charge_state"]["battery_level"]
-
-    @property
-    def soc(self) -> bool:
-        """Just a alias for battery level."""
-        return self._vehicle._data["charge_state"]["battery_heater_on"]
-
-    @property
-    def battery_range(self) -> float:
-        return self._vehicle._data["charge_state"]["battery_range"]
 
     @property
     def charge_current_request(self) -> int:
@@ -195,11 +179,6 @@ class Charge(Stub):
         return self._vehicle._data["charge_state"]["fast_charger_type"]
 
     @property
-    def ideal_battery_range(self) -> float:
-        # what format is this? think its miles
-        return self._vehicle._data["charge_state"]["ideal_battery_range"]
-
-    @property
     def managed_charging_active(self) -> bool:
         # what format is this? think its miles
         return self._vehicle._data["charge_state"]["managed_charging_active"]
@@ -223,11 +202,6 @@ class Charge(Stub):
     def minutes_to_full_charge(self):
         # is this planned departure? is null value.
         return self._vehicle._data["charge_state"]["minutes_to_full_charge"]
-
-    @property
-    def not_enough_power_to_heat(self):
-        # is this planned departure? is null value.
-        return self._vehicle._data["charge_state"]["not_enough_power_to_heat"]
 
     @property
     def scheduled_charging_pending(self) -> bool:
@@ -257,10 +231,6 @@ class Charge(Stub):
         """Trip charging."""
         return self._vehicle._data["charge_state"]["trip_charging"]
 
-    @property
-    def usable_battery_level(self) -> int:
-        """Usable batter level"""
-        return self._vehicle._data["charge_state"]["usable_battery_level"]
 
     @property
     def user_charge_enable_request(self):

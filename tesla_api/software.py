@@ -21,7 +21,7 @@ class Software(Stub):
 
     @property
     def download_percent(self):
-        return self._vehicle._data["vehicle_state"]["software_update"]["install_perc"]
+        return self._vehicle._data["vehicle_state"]["software_update"]["download_perc"]
 
     @property
     def status(self):

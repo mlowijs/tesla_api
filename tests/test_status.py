@@ -1,4 +1,6 @@
 import pytest
+from conftest import vehi
+from data import *
 
 
 @pytest.mark.asyncio
@@ -18,4 +20,8 @@ async def test_Vehicle_Status(vehicle):
     assert status.speed is None
 
 
-# Add methods.
+@pytest.mark.asyncio
+async def test_Vehicle_Status_refresh(client, mocker):
+    v = vehi(client, mocker, DRIVE_STATE)
+    r = await v.get_climate_state()
+    assert isinstance(r, dict)

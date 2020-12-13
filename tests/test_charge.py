@@ -10,8 +10,8 @@ async def test_Vehicle_Charge_attributes(vehicle):
     assert charge.charge_current_request_max == 16
     assert charge.charge_enable_request is True
     assert charge.charge_energy_added == 22.66
-    assert charge.charge_km_added_ideal == 57.478406760703415
-    assert charge.charge_km_added_rated == 57.478406760703415
+    assert charge.charge_km_added_ideal == 148.86025
+    assert charge.charge_km_added_rated == 148.86025
     assert charge.charge_limit == 69
     assert charge.charge_limit_max == 100
     assert charge.charge_limit_min == 50

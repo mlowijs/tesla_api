@@ -4,6 +4,7 @@ import pytest
 def test_Vehicle_Gui_attributes(vehicle):
     media = vehicle.media
     assert media.center_display == "off"
+    assert media.remote_control_enabled is True
 
 
 @pytest.mark.asyncio

@@ -31,7 +31,7 @@ async def test_Vehicle_Controls_Speedlimit_set_speed_limit(client, mocker):
     with pytest.raises(ValueError):
         await speedlimit.set_speed_limit(99999)
 
-    await speedlimit.set_speed_limit(55)
+    await speedlimit.set_speed_limit(90)
 
 
 @pytest.mark.asyncio

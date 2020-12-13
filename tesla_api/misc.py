@@ -12,7 +12,7 @@ class Dict(dict):
 
 def mile_to_km(value):
     """Convert from mile to km"""
-    return value / 1.6093
+    return value * 1.6093
 
 
 def km_to_mile(value):
@@ -27,8 +27,12 @@ def c_to_f(value):
 
 def cast(value):
     """Helper"""
-    if isinstance(value, str):
-        return False if value == "0" else True
-    if isinstance(value, int):
-        return value != 0
+    correct = [True, 1, "1", "true"]
+    falsy = [False, "false", 0, "0", None, ""]
+
+    if value in correct:
+        return True
+    elif value in falsy:
+        return False
+
     raise ValueError("%s expects value that can be bool")

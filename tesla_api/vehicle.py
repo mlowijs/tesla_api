@@ -28,11 +28,12 @@ class Vehicle:
 
     Attributes:
         charge (TYPE): Description
-        climate (TYPE): Description
-        controls (TYPE): Description
-        media (TYPE): Description
-        gui (TYPE): Descrition
-        config (TYPE)
+        climate (TYPE): Anything related to climate control
+        controls (TYPE): Interface for what you can control (like the app)
+        media (TYPE): What's on screen stuff
+        gui (TYPE): Anything regarding the gui, unit type etc
+        config (TYPE): Anything config related
+        battery (TYPE): Anything battery related
     """
 
     def __init__(
@@ -56,8 +57,8 @@ class Vehicle:
         self._api_client = api_client
         self._data = Dict(data)
 
-        self.charge = Charge(self)
         self.battery = Battery(self)
+        self.charge = Charge(self)
         self.climate = Climate(self)
         self.controls = Controls(self)
         self.media = Media(self)

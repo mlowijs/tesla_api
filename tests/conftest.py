@@ -12,7 +12,6 @@ from tesla_api.vehicle import Vehicle
 def client():
 
     fake_client = TeslaApiClient("fake@email.com", "fake_password")
-
     return fake_client
 
 
@@ -25,6 +24,22 @@ def vehicle(client, mocker):
         return True
 
     mocker.patch.object(v, "_command", new=_command)
-
-
     return v
+
+
+def vehi(client, mocker, result=None):
+    ctx = MagicMock()
+    resp = AsyncMock()
+
+    ctx.__aenter__.return_value = resp
+    ctx.__aexit__.return_value = resp
+    ok = AsyncMock(return_value={"response": result})
+    resp.json = ok
+
+
+    mocker.patch.object(client, "_get_headers", return_value={"hello": "you"})
+    mocker.patch.object(client, "authenticate", new=AsyncMock(return_value=None))
+    mocker.patch.object(client._session, "get", return_value=ctx)
+    mocker.patch.object(client._session, "post", return_value=ctx)
+
+    return Vehicle(client, FULL_DATA)

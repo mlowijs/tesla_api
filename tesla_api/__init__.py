@@ -115,9 +115,7 @@ class TeslaApiClient:
 
         _LOGGER.debug("url %s headers: %s params:%s", url, headers, params)
 
-        async with self._session.get(
-            url, headers=headers, params=params
-        ) as resp:
+        async with self._session.get(url, headers=headers, params=params) as resp:
             response_json = await resp.json()
 
         if "error" in response_json:
@@ -138,7 +136,6 @@ class TeslaApiClient:
             url, headers=self._get_headers(), json=data
         ) as resp:
             response_json = await resp.json()
-
 
         if "error" in response_json:
             if "vehicle unavailable" in response_json["error"]:

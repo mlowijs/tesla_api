@@ -11,9 +11,6 @@ class Climate(Stub):
     async def refresh(self):
         return await self._vehicle.get_climate_state()
 
-    async def update(self):
-        return await self.get_state()
-
     async def start_climate(self):
         """Start climate"""
         return await self._vehicle._command("auto_conditioning_start")

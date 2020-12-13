@@ -1,3 +1,16 @@
+import copy
+
+__all__ = ("FULL_DATA", "GUI_SETTINGS", "VEHICLE_STATE", "DRIVE_STATE", "CHARGE_STATE", "ATTRS", "KEYS")
+
+KEYS = [
+    "charge_state",
+    "climate_state",
+    "drive_state",
+    "gui_settings",
+    "vehicle_config",
+    "vehicle_state",
+]
+
 FULL_DATA = {
     "access_type": "OWNER",
     "api_version": 12,
@@ -193,3 +206,7 @@ GUI_SETTINGS = FULL_DATA["gui_settings"]
 VEHICLE_STATE = FULL_DATA["vehicle_state"]
 DRIVE_STATE = FULL_DATA["drive_state"]
 CHARGE_STATE = FULL_DATA["charge_state"]
+ATTRS = copy.deepcopy(FULL_DATA)
+
+for key in KEYS:
+    ATTRS.pop(key, None)

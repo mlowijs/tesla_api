@@ -1,4 +1,5 @@
 import pytest
+from conftest import CHARGE_STATE, vehi
 
 
 @pytest.mark.asyncio
@@ -52,10 +53,10 @@ async def test_Vehicle_Charge_attributes(vehicle):
     assert charge.voltage == 2
 
 
-
 @pytest.mark.asyncio
-async def test_Vehicle_Charge_refresh(vehicle):
-    charge = vehicle.charge
+async def test_Vehicle_Charge_refresh(client, mocker):
+    v = vehi(client, mocker, CHARGE_STATE)
+    charge = v.charge
 
     data = await charge.refresh()
     assert isinstance(data, dict)
@@ -94,10 +95,12 @@ async def test_Vehicle_Charge_set_max_range_limit(vehicle):
     charge = vehicle.charge
     assert await charge.set_max_range_limit() is True
 
+
 @pytest.mark.asyncio
 async def test_Vehicle_Charge_start_charging(vehicle):
     charge = vehicle.charge
     assert await charge.start_charging() is True
+
 
 @pytest.mark.asyncio
 async def test_Vehicle_Charge_stop_charging(vehicle):

@@ -1,6 +1,7 @@
 from functools import partialmethod
 
 from .base import Stub
+from .misc import mile_to_km
 
 
 class Speedlimit(Stub):
@@ -31,14 +32,25 @@ class Speedlimit(Stub):
     async def set_speed_limit(self, limit: int):
         """Sets the maximum speed allowed when Speed Limit Mode is active."""
         # https://tesla-api.timdorr.com/vehicle/commands/speedlimit
-        if 50 <= limit <= 90:
-            #
-            gui = await self._vehicle.get_gui_settings()
-            if gui["gui_distance_units"] == "km/hr":
-                # If the car is using km, lets assume they pass that as a parameter to.
-                limit = limit * 0.62
 
-            return await self._vehicle._command("speed_limit_set_limit")
+        min_limit = 50
+        max_limit = 90
+
+        try:
+            distance_unit = self._vehicle.gui.distance_unit
+        except KeyError:
+            await self._vehicle.full_update()
+            distance_unit = self._vehicle.gui.distance_unit
+
+        if distance_unit == "km/hr":
+            min_limit = mile_to_km(50)
+            max_limit = mile_to_km(90)
+
+
+        # convert to km etc.
+        if min_limit <= limit <= max_limit:
+            # This need to be tested, dunno how this should be passed.
+            return await self._vehicle._command("speed_limit_set_limit", data=limit)
 
         else:
             raise ValueError("limit has to be within 50 - 90MPH")

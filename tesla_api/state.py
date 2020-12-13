@@ -58,13 +58,16 @@ class State(Stub):
         return self._vehicle._data[self.__key]["power"]
 
     @property
-    def shift_state(self) -> str:
-        """Power usage right know. in wpm or wmk"""
+    def shift_state(self) -> Optional[Union[str, None]]:
+        """None, P, D, R, or N"""
         return self._vehicle._data[self.__key]["shift_state"]
 
     @property
     def speed(self) -> Optional[Union[None, int, float]]:
-        """Power usage right know. in wpm or wmk"""
+        """Speed in unit format of the cars
+           #TODO check this.
+
+        """
         return self._vehicle._data[self.__key]["speed"]
 
     @property

@@ -26,7 +26,6 @@ async def test_TeslaApiClient_get(client, mocker, vehicle):
     ok = AsyncMock(return_value={"response": FULL_DATA})
     resp.json = err
 
-
     mocker.patch.object(client, "_get_headers", return_value={"hello": "you"})
     mocker.patch.object(client, "authenticate", new=AsyncMock(return_value=None))
     mocker.patch.object(client._session, "get", return_value=ctx)
@@ -38,3 +37,9 @@ async def test_TeslaApiClient_get(client, mocker, vehicle):
 
     raw = await client.get("vehicles")
     assert raw == FULL_DATA == vehicle._data
+
+
+@pytest.mark.asyncio
+@pytest.mark.skip()
+async def test_TeslaApiClient_list_energy_sites(client, mocker, vehicle):
+    data = await client.list_energy_sites()

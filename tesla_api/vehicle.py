@@ -1,6 +1,7 @@
 """Summary
 """
 import asyncio
+import json
 import logging
 from collections import defaultdict
 from datetime import datetime, timezone
@@ -11,7 +12,7 @@ from .charge import Charge
 from .climate import Climate
 from .config import Config
 from .controls import Controls
-from .exceptions import ApiError, ParameterError, VehicleUnavailableError
+from .exceptions import ApiError, VehicleUnavailableError
 from .gui import Gui
 from .media import Media
 from .misc import Dict
@@ -33,7 +34,12 @@ class Vehicle:
         config (TYPE)
     """
 
-    def __init__(self, api_client: "TeslaApiClient", data: Dict = Dict, lock: Optional[Union[None, asyncio.Lock]] = None):
+    def __init__(
+        self,
+        api_client: "TeslaApiClient",
+        data: Dict = Dict,
+        lock: Optional[Union[None, asyncio.Lock]] = None,
+    ):
         """Summary
 
         Args:
@@ -58,14 +64,22 @@ class Vehicle:
         self.config = Config(self)
 
     async def get_charge_state(self):
-        data = await self._api_client.get(f'vehicles/{self.id}/data_request/charge_state')
+        data = await self._api_client.get(
+            f"vehicles/{self.id}/data_request/charge_state"
+        )
         async with self._lock:
+            if "charge_state" not in self._data:
+                self._data["charge_state"].update(data)
             self._data["charge_state"].update(data)
         return data
 
     async def get_climate_state(self):
-        data = await self._api_client.get(f'vehicles/{self.id}/data_request/climate_state')
+        data = await self._api_client.get(
+            f"vehicles/{self.id}/data_request/climate_state"
+        )
         async with self._lock:
+            if "climate_state" not in self._data:
+                self._data["climate_state"] = {}
             self._data["climate_state"].update(data)
         return data
 
@@ -78,16 +92,17 @@ class Vehicle:
 
         Returns:
             bytes: bytes png
-        """ # untested.
+        """  # untested.
         params = {
             "model": "m" + self.vin[3].lower(),
             "bkba_opt": 1,
             "view": view,
             "size": size,
-            "options": self.option_codes,
+            "options": ",".join(self.option_codes),
         }
+
         url = "https://static-assets.tesla.com/v1/compositor/"
-        async with self._session.get(url, params=params) as resp:
+        async with self._api_client._session.get(url, params=params) as resp:
             img = await resp.read()
             return img
 
@@ -188,61 +203,69 @@ class Vehicle:
         return await self._api_client.get(f"vehicles/{self.id}/mobile_enabled")
 
     async def get_data(self):
-        """Summary
+        """Full all info about the cars.
 
         Returns:
             TYPE: Description
         """
         data = await self._api_client.get(f"vehicles/{self.id}/vehicle_data")
         async with self._lock:
-            self._data["vehicle_data"].update(data)
+            self._data.update(data)
         # Wft is this used for anyway?
-        self._update_vehicle({k: v for k, v in data.items()})
-        return self._data
+        # self._update_vehicle({k: v for k, v in data.items()})
+        return data
 
     async def full_update(self):
-        """Do a full update.
-        """
+        """Do a full update."""
         await self.get_data()
 
     async def get_state(self):
-        """Summary
+        """Get state of the cars.
 
         Returns:
-            TYPE: Description
+            dict: Json of the state of the car.
         """
         data = await self._api_client.get(
             f"vehicles/{self.id}/data_request/vehicle_state"
         )
         async with self._lock:
+            if "vehicle_state" not in self.data:
+                self._data["vehicle_state"] = {}
             self._data["vehicle_state"].update(data)
+
         return data
 
     async def get_drive_state(self):
-        """Get drave state
+        """Get drive state
 
         Returns:
-            dict:
+            dict: dict of drive state.
         """
         data = await self._api_client.get(
             f"vehicles/{self.id}/data_request/drive_state"
         )
 
         async with self._lock:
+            if "drive_state" not in self._data:
+                self._data["drive_state"] = {}
             self._data["drive_state"].update(data)
+
         return data
 
     async def get_gui_settings(self):
         """Get gui settings.
 
         Returns:
-            TYPE: Description
+            dict: dict of gui settings
         """
         data = await self._api_client.get(
             f"vehicles/{self.id}/data_request/gui_settings"
         )
         async with self._lock:
+            if "gui_settings" not in self._data:
+                self._data["gui_settings"] = {}
             self._data["gui_settings"].update(data)
+
         return data
 
     async def wake_up(self, timeout=-1):
@@ -298,17 +321,32 @@ class Vehicle:
         """
         password = password or self._api_client._password
         if password is None:
-            raise ParameterError(
+            raise ValueError(
                 "password is required to be passed or in used for authentication."
             )
 
         return await self._command("remote_start_drive", data={"password": password})
 
-    async def update(self): # Should this be refresh.
-        """Summary"""
-        resp = await self._api_client.get(f"vehicles/{self.id}")
+    async def refresh(self):
+        """Refresh attributes for this class."""
+        data = await self._api_client.get(f"vehicles/{self.id}")
+        # For some reason the api seems to include vehicle_config,
+        # for this one we only want stuff for the attributes
+        # so we are gonna remove other info.
+        for key in [
+            "charge_state",
+            "climate_state",
+            "drive_state",
+            "gui_settings",
+            "vehicle_config",
+            "vehicle_state",
+        ]:
+            data.pop(key, None)
+
         async with self._lock:
-            self._update_vehicle(resp)
+            self._data.update(data)
+
+        return data
 
     @property
     def vin(self):
@@ -374,3 +412,8 @@ class Vehicle:
     @property
     def color(self) -> str:
         return self._data["color"] or self._data["vehicle_config"]["exterior_color"]
+
+    @property
+    def option_codes(self):
+        """Don't trust these."""
+        return self._data["option_codes"].split(",")

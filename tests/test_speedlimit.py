@@ -1,6 +1,8 @@
+import pytest
+from conftest import vehi
 
 
-def test_speedlimit_attributes(vehicle):
+def test_Vehicle_Controls_Speedlimit_attributes(vehicle):
     speedlimit = vehicle.controls.speedlimit
     assert speedlimit.current_limit == 52.81799540172746
     assert speedlimit.current_limit_mph == 85.0
@@ -9,4 +11,33 @@ def test_speedlimit_attributes(vehicle):
     assert speedlimit.pin_code_set is False
 
 
-# Add test for methods.
+@pytest.mark.asyncio
+async def test_Vehicle_Controls_Speedlimit_activate_speed_limit(client, mocker):
+    v = vehi(client, mocker, {"result": True})
+    speedlimit = v.controls.speedlimit
+    assert await speedlimit.activate_speed_limit(9999) is True
+
+
+@pytest.mark.asyncio
+async def test_Vehicle_Controls_Speedlimit_deactivate_speed_limit(vehicle):
+    speedlimit = vehicle.controls.speedlimit
+    assert await speedlimit.activate_speed_limit(1234) is True
+
+
+@pytest.mark.asyncio
+async def test_Vehicle_Controls_Speedlimit_set_speed_limit(client, mocker):
+    v = vehi(client, mocker, {"result": True})
+    speedlimit = v.controls.speedlimit
+    with pytest.raises(ValueError):
+        await speedlimit.set_speed_limit(99999)
+
+    await speedlimit.set_speed_limit(55)
+
+
+@pytest.mark.asyncio
+async def test_Vehicle_Controls_Speedlimit_set_speed_clear_speed_limit_pin(vehicle):
+    speedlimit = vehicle.controls.speedlimit
+    with pytest.raises(ValueError):
+        await speedlimit.clear_speed_limit_pin(0)
+    await speedlimit.clear_speed_limit_pin("1234")
+    await speedlimit.clear_speed_limit_pin(1234)

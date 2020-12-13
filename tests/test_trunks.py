@@ -18,10 +18,3 @@ async def test_Vehicle_Status_Trunks_open_frunk(vehicle):
 async def test_Vehicle_Status_Trunks_open_trunk(vehicle):
     trunks = vehicle.controls.trunks
     assert await trunks.open_trunk() is True
-
-
-
-
-
-
-# test methods here.

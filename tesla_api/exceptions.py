@@ -12,8 +12,3 @@ class ApiError(Exception):
 class VehicleUnavailableError(Exception):
     def __init__(self):
         super().__init__('Vehicle failed to wake up.')
-
-
-class ParameterError(Exception):
-    def __init__(self, msg):
-        super().__init__(msg)

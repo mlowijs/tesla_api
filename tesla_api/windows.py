@@ -25,7 +25,7 @@ class Windows(Stub):
         return cast(self._vehicle._data["vehicle_state"]["fd_window"])
 
     @property
-    def passanger_window_open(self) -> bool:
+    def passenger_window_open(self) -> bool:
         return cast(self._vehicle._data["vehicle_state"]["fp_window"])
 
     @property

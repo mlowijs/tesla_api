@@ -1,6 +1,6 @@
 import copy
 
-__all__ = ("FULL_DATA", "GUI_SETTINGS", "VEHICLE_STATE", "DRIVE_STATE", "CHARGE_STATE", "ATTRS", "KEYS")
+__all__ = ("FULL_DATA", "GUI_SETTINGS", "VEHICLE_STATE", "DRIVE_STATE", "CHARGE_STATE", "ATTRS", "KEYS", "CLIMATE_STATE")
 
 KEYS = [
     "charge_state",

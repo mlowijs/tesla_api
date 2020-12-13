@@ -2,8 +2,8 @@ import asyncio
 
 import pytest
 from async_mock import AsyncMock, MagicMock
-from data import (CHARGE_STATE, DRIVE_STATE, FULL_DATA, GUI_SETTINGS,
-                  VEHICLE_STATE)
+from data import (CHARGE_STATE, CLIMATE_STATE, DRIVE_STATE, FULL_DATA,
+                  GUI_SETTINGS, VEHICLE_STATE)
 from tesla_api import TeslaApiClient
 from tesla_api.vehicle import Vehicle
 

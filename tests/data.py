@@ -206,6 +206,7 @@ GUI_SETTINGS = FULL_DATA["gui_settings"]
 VEHICLE_STATE = FULL_DATA["vehicle_state"]
 DRIVE_STATE = FULL_DATA["drive_state"]
 CHARGE_STATE = FULL_DATA["charge_state"]
+CLIMATE_STATE = FULL_DATA["climate_state"]
 ATTRS = copy.deepcopy(FULL_DATA)
 
 for key in KEYS:

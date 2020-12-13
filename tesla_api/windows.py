@@ -21,17 +21,17 @@ class Windows(Stub):
         )
 
     @property
-    def front_driver_window_open(self) -> bool:
+    def driver_window_open(self) -> bool:
         return cast(self._vehicle._data["vehicle_state"]["fd_window"])
 
     @property
-    def front_passanger_window_open(self) -> bool:
+    def passanger_window_open(self) -> bool:
         return cast(self._vehicle._data["vehicle_state"]["fp_window"])
 
     @property
-    def rear_driver_door_open(self) -> bool:
+    def rear_driver_window_open(self) -> bool:
         return cast(self._vehicle._data["vehicle_state"]["rd_window"])
 
     @property
-    def rear_passenger_door_open(self) -> bool:
+    def rear_passenger_window_open(self) -> bool:
         return cast(self._vehicle._data["vehicle_state"]["rp_window"])

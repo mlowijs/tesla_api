@@ -19,6 +19,7 @@ async def test_Vehicle_attributes(vehicle):
     assert vehicle.state == "online"
     assert vehicle.tokens == ['dae9f13e1889e1e1', '1ad6b8d43a795273']
     assert vehicle.vin == "5YJ3E7EB4LF999999"
+    assert len(vehicle.option_codes)
 
     with pytest.raises(AttributeError):
         assert vehicle.non_existing_att
@@ -35,7 +36,7 @@ async def test_Vehicle_get_charge_state(client, mocker):
 
 
 @pytest.mark.asyncio
-async def _test_Vehicle_get_climate_state(client, mocker):
+async def test_Vehicle_get_climate_state(client, mocker):
     v = vehi(client, mocker, CLIMATE_STATE)
     r = await v.get_climate_state()
     assert isinstance(r, dict)
@@ -83,7 +84,7 @@ async def test_Vehicle_full_update(client, mocker):
 @pytest.mark.asyncio
 async def test_Vehicle_get_state(client, mocker):
     v = vehi(client, mocker, VEHICLE_STATE)
-    r = await v.get_data()
+    r = await v.get_state()
     assert isinstance(r, dict)
 
 
@@ -92,6 +93,8 @@ async def test_Vehicle_get_drive_state(client, mocker):
     v = vehi(client, mocker, DRIVE_STATE)
     r = await v.get_data()
     assert isinstance(r, dict)
+
+
 
 
 @pytest.mark.asyncio

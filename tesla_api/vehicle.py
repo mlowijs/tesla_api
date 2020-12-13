@@ -229,7 +229,7 @@ class Vehicle:
             f"vehicles/{self.id}/data_request/vehicle_state"
         )
         async with self._lock:
-            if "vehicle_state" not in self.data:
+            if "vehicle_state" not in self._data:
                 self._data["vehicle_state"] = {}
             self._data["vehicle_state"].update(data)
 

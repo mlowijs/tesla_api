@@ -1,8 +1,6 @@
-
 import pytest
 from conftest import vehi
 from data import *
-from PIL import Image
 
 
 @pytest.mark.asyncio
@@ -18,7 +16,7 @@ async def test_Vehicle_attributes(vehicle):
     assert str(vehicle.last_update.date()) == "2020-11-18"
     assert vehicle.odometer == 2652.51
     assert vehicle.state == "online"
-    assert vehicle.tokens == ['dae9f13e1889e1e1', '1ad6b8d43a795273']
+    assert vehicle.tokens == ["dae9f13e1889e1e1", "1ad6b8d43a795273"]
     assert vehicle.vin == "5YJ3E7EB4LF999999"
     assert len(vehicle.option_codes)
 
@@ -59,9 +57,11 @@ async def test_Vehicle_address(vehicle):
 
 
 @pytest.mark.asyncio
+@pytest.mark.skip(reason="#TODO")
 async def test_Vehicle_nearby_charging_sites(vehicle):
-    #data = await vehicle.nearby_charging_sites()
+    # data = await vehicle.nearby_charging_sites()
     pass
+
 
 @pytest.mark.asyncio
 async def test_Vehicle_is_mobile_access_enabled(client, mocker):
@@ -74,14 +74,14 @@ async def test_Vehicle_is_mobile_access_enabled(client, mocker):
 async def test_Vehicle_get_data(client, mocker):
     v = vehi(client, mocker, CHARGE_STATE)
     r = await v.get_data()
-    assert isinstance(r, dict)
+    assert r == CHARGE_STATE
 
 
 @pytest.mark.asyncio
 async def test_Vehicle_full_update(client, mocker):
     v = vehi(client, mocker, FULL_DATA)
     r = await v.get_data()
-    assert isinstance(r, dict)
+    assert r == FULL_DATA
 
 
 @pytest.mark.asyncio
@@ -95,22 +95,24 @@ async def test_Vehicle_get_state(client, mocker):
 async def test_Vehicle_get_drive_state(client, mocker):
     v = vehi(client, mocker, DRIVE_STATE)
     r = await v.get_data()
-    assert isinstance(r, dict)
+    assert r == DRIVE_STATE
 
 
 @pytest.mark.asyncio
 async def test_Vehicle_get_gui_settings(client, mocker):
     v = vehi(client, mocker, GUI_SETTINGS)
     r = await v.get_data()
-    assert isinstance(r, dict)
+    assert r == GUI_SETTINGS
 
 
 @pytest.mark.asyncio
+@pytest.mark.skip(reason="#TODO")
 async def test_Vehicle_wake_up(vehicle):
     pass
 
 
 @pytest.mark.asyncio
+@pytest.mark.skip(reason="#TODO")
 async def test_Vehicle_remote_start(vehicle):
     pass
 
@@ -119,4 +121,4 @@ async def test_Vehicle_remote_start(vehicle):
 async def test_Vehicle_refresh(client, mocker):
     v = vehi(client, mocker, ATTRS)
     r = await v.refresh()
-    assert isinstance(r, dict)
+    assert r == ATTRS

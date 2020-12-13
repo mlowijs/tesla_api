@@ -18,6 +18,7 @@ class Controls(Stub):
         self.sentry = Sentry(vehicle)
 
     async def _set_sunroof_state(self, state):
+        """ Controls the panoramic sunroof on the Model S. """
         return await self._vehicle._command("sun_roof_control", {"state": state})
 
     vent_sunroof = partialmethod(_set_sunroof_state, "vent")
@@ -26,6 +27,14 @@ class Controls(Stub):
     async def flash_lights(self):
         """Flash front lights."""
         return await self._vehicle._command("flash_lights")
+
+    async def homelink(self, lat=None, lon=None):
+        """Opens or closes the primary Homelink device. The provided location must be in proximity of stored location of the Homelink device."""
+        lat = lat or self._vehicle._data["drive_state"]["latitude"]
+        lon = lon or self._vehicle._data["drive_state"]["longitude"]
+        data = {"lat": lat, "lon": lon}
+
+        return await self._vehicle._command("trigger_homelink", data=data)
 
     async def honk_horn(self):
         """Honk the horn."""

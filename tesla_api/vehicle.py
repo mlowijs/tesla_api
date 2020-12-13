@@ -330,6 +330,29 @@ class Vehicle:
 
         return await self._command("remote_start_drive", data={"password": password})
 
+    async def share(self, value="", locale="en-US", timestamp_ms=None):
+        """Sends a location for the car to start navigation or play a video in theatre mode
+
+        Args:
+            value (str): The address or video URL to set as the navigation destination.
+            locale (str): ISO 639-1 standard language code
+            timestamp_ms (None, int):
+
+
+
+        """
+        tms = timestamp_ms or time.time() * 1000
+        data = {
+            "type": "share_ext_content_raw",
+            "value": {
+                "android.intent.extra.TEXT": ""
+            },
+            "locale": locale,
+            "timestamp_ms": int(tms),
+        }
+
+        return await self._api_client.post(f"vehicles/{self.id}/command/share", data=data)
+
     async def refresh(self):
         """Refresh attributes for this class."""
         data = await self._api_client.get(f"vehicles/{self.id}")

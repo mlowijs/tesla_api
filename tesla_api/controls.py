@@ -3,6 +3,7 @@ from functools import partialmethod
 from .base import Stub
 from .doors import Doors
 from .sentry import Sentry
+from .software import Software
 from .speedlimit import Speedlimit
 from .trunks import Trunks
 from .windows import Windows
@@ -16,6 +17,7 @@ class Controls(Stub):
         self.speedlimit = Speedlimit(vehicle)
         self.trunks = Trunks(vehicle)
         self.sentry = Sentry(vehicle)
+        self.software = Software(vehicle)
 
     async def _set_sunroof_state(self, state):
         """ Controls the panoramic sunroof on the Model S. """

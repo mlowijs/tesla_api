@@ -213,7 +213,6 @@ class Charge(Stub):
         # is this planned departure? is null value.
         return self._vehicle._data["charge_state"]["scheduled_charging_start_time"]
 
-    # time_to_full_charge
     @property
     def fully_charged_at(self) -> datetime:
         #return self._vehicle._data["charge_state"]["time_to_full_charge"]

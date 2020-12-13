@@ -180,11 +180,11 @@ FULL_DATA = {
         "sentry_mode": False,
         "sentry_mode_available": True,
         "software_update": {
-            "download_perc": 0,
+            "download_perc": 100,
             "expected_duration_sec": 2700,
             "install_perc": 1,
             "status": "",
-            "version": "",
+            "version": "2020.48.10",
         },
         "speed_limit_mode": {
             "active": False,

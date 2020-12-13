@@ -338,8 +338,6 @@ class Vehicle:
             locale (str): ISO 639-1 standard language code
             timestamp_ms (None, int):
 
-
-
         """
         tms = timestamp_ms or time.time() * 1000
         data = {

@@ -10,15 +10,15 @@ class Speedlimit(Stub):
         return self._vehicle._data["vehicle_state"]["speed_limit_mode"]["active"]
 
     @property
-    def current_limit_mph(self):
+    def current_limit_mph(self) -> float:
         return self._vehicle._data["vehicle_state"]["speed_limit_mode"]["current_limit_mph"]
 
     @property
-    def current_limit(self):
+    def current_limit(self) -> float:
         return self._vehicle._format_distance_unit(self.current_limit_mph)
 
     @property
-    def max_limit_mph(self):
+    def max_limit_mph(self) -> int:
         return self._vehicle._data["vehicle_state"]["speed_limit_mode"]["max_limit_mph"]
 
     def max_limit(self):
@@ -26,7 +26,7 @@ class Speedlimit(Stub):
         return self._vehicle._format_distance_unit(self.max_limit_mph)
 
     @property
-    def pin_code_set(self):
+    def pin_code_set(self) -> bool:
         return self._vehicle._data["vehicle_state"]["speed_limit_mode"]["pin_code_set"]
 
     async def set_speed_limit(self, limit: int):
@@ -55,13 +55,13 @@ class Speedlimit(Stub):
         else:
             raise ValueError("limit has to be within 50 - 90MPH")
 
-    async def _speed_limit(self, cmd, pin):
+    async def _speed_limit(self, cmd: str, pin: int) -> bool:
         return await self._vehicle._command(cmd, data={"pin": pin})
 
     activate_speed_limit = partialmethod(_speed_limit, "speed_limit_activate")
     deactivate_speed_limit = partialmethod(_speed_limit, "speed_limit_deactivate")
 
-    async def clear_speed_limit_pin(self, pin: int):
+    async def clear_speed_limit_pin(self, pin: int) -> bool:
         """Clears the currently set PIN for Speed Limit Mode."""
         pin = int(pin)
         if (0 <= pin <= 9999) and len(str(pin)) == 4:

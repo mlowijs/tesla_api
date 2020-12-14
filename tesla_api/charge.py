@@ -43,59 +43,59 @@ class Charge(Stub):
 
 
     @property
-    def charge_current_request(self) -> int:
+    def charge_current_request(self):
         return self._vehicle._data["charge_state"]["charge_current_request"]
 
     @property
-    def charge_current_request_max(self) -> int:
+    def charge_current_request_max(self):
         return self._vehicle._data["charge_state"]["charge_current_request_max"]
 
     @property
-    def charge_enable_request(self) -> bool:
+    def charge_enable_request(self):
         return self._vehicle._data["charge_state"]["charge_enable_request"]
 
     @property
-    def charge_energy_added(self) -> float:
+    def charge_energy_added(self):
         """kWh added into the battery."""
         return self._vehicle._data["charge_state"]["charge_energy_added"]
 
     @property
-    def charge_limit(self) -> int:
+    def charge_limit(self):
         """kWh added into the battery."""
         return self._vehicle._data["charge_state"]["charge_limit_soc"]
 
     @property
-    def charge_limit_max(self) -> int:
+    def charge_limit_max(self):
         """kWh added into the battery."""
         return self._vehicle._data["charge_state"]["charge_limit_soc_max"]
 
     @property
-    def charge_limit_min(self) -> int:
+    def charge_limit_min(self):
         """kWh added into the battery."""
         return self._vehicle._data["charge_state"]["charge_limit_soc_min"]
 
     @property
-    def charge_limit_std(self) -> int:
+    def charge_limit_std(self):
         """kWh added into the battery."""
         return self._vehicle._data["charge_state"]["charge_limit_soc_std"]
 
     @property
-    def charge_miles_added_ideal(self) -> int:
+    def charge_miles_added_ideal(self):
         """kWh added into the battery."""
         return self._vehicle._data["charge_state"]["charge_miles_added_ideal"]
 
     @property
-    def charge_miles_added_rated(self) -> int:
+    def charge_miles_added_rated(self):
         """Rated range added in km added into the battery."""
         return self._vehicle._data["charge_state"]["charge_miles_added_rated"]
 
     @property
-    def charge_km_added_ideal(self) -> int:
+    def charge_km_added_ideal(self):
         """kWh added into the battery."""
         return mile_to_km(self.charge_miles_added_ideal)
 
     @property
-    def charge_km_added_rated(self) -> int:
+    def charge_km_added_rated(self):
         """Rated range added in km added into the battery."""
         return mile_to_km(self.charge_miles_added_rated)
 
@@ -105,12 +105,13 @@ class Charge(Stub):
         return self._vehicle._data["charge_state"]["charge_port_cold_weather_mode"]
 
     @property
-    def charge_port_door_open(self) -> bool:
+    def charge_port_door_open(self):
         # is this the charge port heater, if we it should be renamed.
         return self._vehicle._data["charge_state"]["charge_port_door_open"]
 
     @property
-    def charge_port_latch(self) -> bool:
+    def charge_port_latch(self):
+        # this should be bool but i assume mypy uses True
         value = self._vehicle._data["charge_state"]["charge_port_latch"]
         if value and value.lower() == "engaged":
             return True
@@ -128,12 +129,12 @@ class Charge(Stub):
         return self._vehicle._data["charge_state"]["charge_to_max_range"]
 
     @property
-    def actual_current(self) -> int:
+    def actual_current(self):
         """The charge speed in kWh."""
         return self._vehicle._data["charge_state"]["charger_actual_current"]
 
     @property
-    def phases(self) -> int:
+    def phases(self):
         """How many phases does the car charge with."""
         return self._vehicle._data["charge_state"]["charger_phases"]
 
@@ -143,44 +144,44 @@ class Charge(Stub):
         return self._vehicle._data["charge_state"]["charger_pilot_current"]
 
     @property
-    def power(self) -> int:
+    def power(self):
         """Charge power in kWh"""
         return self._vehicle._data["charge_state"]["charger_power"]
 
     @property
-    def voltage(self) -> int:
+    def voltage(self):
         """Charge power in kWh"""
         return self._vehicle._data["charge_state"]["charger_voltage"]
 
     @property
-    def charging_state(self) -> str:
+    def charging_state(self):
         """Only seen Charging as state"""
         return self._vehicle._data["charge_state"]["charging_state"]
 
     @property
-    def conn_charge_cable(self) -> str:
+    def conn_charge_cable(self):
         """charge cabel connection?"""
         return self._vehicle._data["charge_state"]["conn_charge_cable"]
 
     @property
-    def estimated_battery_range(self) -> float:
+    def estimated_battery_range(self):
         return self._vehicle._data["charge_state"]["est_battery_range"]
 
     @property
-    def fast_charger_brand(self) -> str:
+    def fast_charger_brand(self):
         return self._vehicle._data["charge_state"]["fast_charger_brand"]
 
     @property
-    def fast_charger_present(self) -> str:
+    def fast_charger_present(self):
         return self._vehicle._data["charge_state"]["fast_charger_present"]
 
     @property
-    def fast_charger_type(self) -> str:
+    def fast_charger_type(self):
         return self._vehicle._data["charge_state"]["fast_charger_type"]
 
     @property
-    def managed_charging_active(self) -> bool:
-        # what format is this? think its miles
+    def managed_charging_active(self):
+        """Is managed charing active."""
         return self._vehicle._data["charge_state"]["managed_charging_active"]
 
     @property
@@ -204,29 +205,29 @@ class Charge(Stub):
         return self._vehicle._data["charge_state"]["minutes_to_full_charge"]
 
     @property
-    def scheduled_charging_pending(self) -> bool:
+    def scheduled_charging_pending(self):
         # is this planned departure? is null value.
         return self._vehicle._data["charge_state"]["scheduled_charging_pending"]
 
     @property
-    def scheduled_charging_start_time(self) -> bool:
+    def scheduled_charging_start_time(self):
         # is this planned departure? is null value.
         return self._vehicle._data["charge_state"]["scheduled_charging_start_time"]
 
     @property
-    def fully_charged_at(self) -> datetime:
+    def fully_charged_at(self):
         #return self._vehicle._data["charge_state"]["time_to_full_charge"]
         # check that the timestamp updated.
         return self.timestamp + timedelta(minutes=self.minutes_to_full_charge)
 
     @property
-    def timestamp(self) -> datetime:
+    def timestamp(self):
         """Datetime from the last time the data was updated."""
         value = self._vehicle._data["charge_state"]["timestamp"]
         return datetime.utcfromtimestamp(value / 1000)
 
     @property
-    def trip_charging(self) -> bool:
+    def trip_charging(self):
         """Trip charging."""
         return self._vehicle._data["charge_state"]["trip_charging"]
 

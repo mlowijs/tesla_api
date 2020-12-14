@@ -50,8 +50,10 @@ async def test_Vehicle_compose_image(vehicle):
 
 
 @pytest.mark.asyncio
+@pytest.mark.xfail
 async def test_Vehicle_address(vehicle):
     # lat lon to the royal palace in Oslo.
+    # allow this to fail if the remote service is down.
     data = await vehicle.address(59.916911, 10.727567)
     assert "Det kongelige slott" in data
 

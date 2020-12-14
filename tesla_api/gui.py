@@ -11,15 +11,15 @@ class Gui(Stub):
         return self._vehicle._data[self.__key]["gui_24_hour_time"]
 
     @property
-    def charge_rate_units(self):
+    def charge_rate_units(self) -> str:
         return self._vehicle._data[self.__key]["gui_charge_rate_units"]
 
     @property
-    def distance_unit(self):
+    def distance_unit(self) -> str:
         return self._vehicle._data[self.__key]["gui_distance_units"]
 
     @property
-    def temperature_unit(self):
+    def temperature_unit(self) -> str:
         return self._vehicle._data[self.__key]["gui_temperature_units"]
 
     @property

@@ -1,6 +1,7 @@
 """Climate"""
 from datetime import datetime
 from functools import partialmethod
+from typing import Optional
 
 from .base import Stub
 
@@ -8,26 +9,26 @@ from .base import Stub
 class Climate(Stub):
     __key = "climate_state"
 
-    async def refresh(self):
+    async def refresh(self) -> dict:
         return await self._vehicle.get_climate_state()
 
-    async def start_climate(self):
+    async def start_climate(self) -> bool:
         """Start climate"""
         return await self._vehicle._command("auto_conditioning_start")
 
-    async def stop_climate(self):
+    async def stop_climate(self) -> bool:
         """Stop climate."""
         return await self._vehicle._command("auto_conditioning_stop")
 
-    async def enable_max_defrost(self, on: bool = True):
+    async def enable_max_defrost(self, on: bool = True) -> bool:
         """Toggles the climate controls between Max Defrost and the previous setting."""
         return await self._vehicle._command("set_preconditioning_max", data={"on": on})
 
     disable_max_defrost = partialmethod(enable_max_defrost, on=False)
 
     async def set_temperature(
-        self, driver_temperature: int, passenger_temperature=None
-    ):
+        self, driver_temperature: int, passenger_temperature: Optional[int] = None
+    ) -> bool:
         """Set temperatur on the driver and/or passenger side."""
         # check what format this is in.
         data = {
@@ -36,7 +37,7 @@ class Climate(Stub):
         }
         return await self._vehicle._command("set_temps", data=data)
 
-    async def set_seat_heater(self, temp: int = 0, seat: int = 0):
+    async def set_seat_heater(self, temp: int = 0, seat: int = 0) -> bool:
         """Turn on the seat heater.
 
         Args:
@@ -59,7 +60,7 @@ class Climate(Stub):
             "remote_seat_heater_request", {"heater": seat, "level": temp}
         )
 
-    async def steering_wheel_heater(self, on: bool = True):
+    async def steering_wheel_heater(self, on: bool = True) -> bool:
         """"Turn on or off the steering wheel heater"""
         return await self._vehicle._command(
             "remote_steering_wheel_heater_request", {"on": on}
@@ -69,7 +70,7 @@ class Climate(Stub):
     stop_steering_wheel_heater = partialmethod(steering_wheel_heater, False)
 
     @property
-    def battery_heater(self):
+    def battery_heater(self) -> bool:
         """Is the battery heater on."""
         return self._vehicle._data[self.__key]["battery_heater"]
 
@@ -84,7 +85,7 @@ class Climate(Stub):
         return self._vehicle._data[self.__key]["climate_keeper_mode"]
 
     @property
-    def defrost_mode(self):
+    def defrost_mode(self) -> int:
         """Defrost mode"""
         return self._vehicle._data[self.__key]["defrost_mode"]
 

@@ -1,13 +1,14 @@
 from .base import Stub
+from .misc import cast
 
 
 class Battery(Stub):
     @property
-    def not_enough_power_to_heat(self):
-        return self._vehicle._data["charge_state"]["not_enough_power_to_heat"]
+    def not_enough_power_to_heat(self) -> bool:
+        return cast(self._vehicle._data["charge_state"]["not_enough_power_to_heat"])
 
     @property
-    def heater_on(self):
+    def heater_on(self) -> bool:
         return self._vehicle._data["charge_state"]["battery_heater_on"]
 
     @property

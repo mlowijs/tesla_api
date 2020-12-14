@@ -9,8 +9,9 @@ from .trunks import Trunks
 from .windows import Windows
 
 
+from tesla_api.vehicle import Vehicle
 class Controls(Stub):
-    def __init__(self, vehicle):
+    def __init__(self, vehicle: Vehicle) -> None:
         super().__init__(vehicle)
         self.doors = Doors(vehicle)
         self.windows = Windows(vehicle)
@@ -19,14 +20,14 @@ class Controls(Stub):
         self.sentry = Sentry(vehicle)
         self.software = Software(vehicle)
 
-    async def _set_sunroof_state(self, state):
+    async def _set_sunroof_state(self, state: str) -> bool:
         """ Controls the panoramic sunroof on the Model S. """
         return await self._vehicle._command("sun_roof_control", {"state": state})
 
     vent_sunroof = partialmethod(_set_sunroof_state, "vent")
     close_sunroof = partialmethod(_set_sunroof_state, "close")
 
-    async def flash_lights(self):
+    async def flash_lights(self) -> bool:
         """Flash front lights."""
         return await self._vehicle._command("flash_lights")
 
@@ -38,11 +39,11 @@ class Controls(Stub):
 
         return await self._vehicle._command("trigger_homelink", data=data)
 
-    async def honk_horn(self):
+    async def honk_horn(self) -> bool:
         """Honk the horn."""
         return await self._vehicle._command("honk_horn")
 
-    async def set_valet_mode(self, on: bool = True, password=""):
+    async def set_valet_mode(self, on: bool = True, password: str = "") -> bool:
         """Turn on or off valet mode.
 
         Valet Mode limits the car's top speed to 70MPH and 80kW of acceleration power. It also disables Homelink, Bluetooth and Wifi settings, and the ability to disable mobile access to the car. It also hides your favorites, home, and work locations in navigation.

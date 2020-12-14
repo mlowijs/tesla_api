@@ -14,7 +14,7 @@ class Sentry(Stub):
 
     # Should probable check and rename methods
     # I want them to be as close to the class as possible.
-    async def enable(self, on: bool = True):
+    async def enable(self, on: bool = True) -> bool:
         """Enable sentry mode."""
         return await self._vehicle._command("set_sentry_mode", data={"on": on})
 

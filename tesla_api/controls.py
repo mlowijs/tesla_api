@@ -1,4 +1,5 @@
 from functools import partialmethod
+from typing import Optional
 
 from .base import Stub
 from .doors import Doors
@@ -9,9 +10,8 @@ from .trunks import Trunks
 from .windows import Windows
 
 
-from tesla_api.vehicle import Vehicle
 class Controls(Stub):
-    def __init__(self, vehicle: Vehicle) -> None:
+    def __init__(self, vehicle: "Vehicle") -> None:
         super().__init__(vehicle)
         self.doors = Doors(vehicle)
         self.windows = Windows(vehicle)
@@ -31,7 +31,7 @@ class Controls(Stub):
         """Flash front lights."""
         return await self._vehicle._command("flash_lights")
 
-    async def homelink(self, lat=None, lon=None):
+    async def homelink(self, lat=Optional[float], lon=Optional[float]) -> True:
         """Opens or closes the primary Homelink device. The provided location must be in proximity of stored location of the Homelink device."""
         lat = lat or self._vehicle._data["drive_state"]["latitude"]
         lon = lon or self._vehicle._data["drive_state"]["longitude"]

@@ -211,3 +211,79 @@ ATTRS = copy.deepcopy(FULL_DATA)
 
 for key in KEYS:
     ATTRS.pop(key, None)
+
+
+
+
+if __name__ == "__main__":
+    import click
+    from tesla_api import TeslaApiClient
+    from copy import deepcopy
+    import json
+
+    @click.command(help="Tool to check for diff in api response")
+    @click.option("--username", help="Username to your tesla account")
+    @click.option(
+        "--password",
+        prompt=False,
+        hide_input=False,
+        confirmation_prompt=False,
+        help="Password to your tesla account",
+    )
+    @click.option(
+        "--changes",
+        default="all",
+        type=click.Choice(["add", "remove", "change", "all"]),
+        help="What changes do you want to be displayed",
+    )
+    @click.option(
+        "--fixup",
+        default=False,
+        help="Add any removed or added to FULL_DATA",
+        is_flag=True
+    )
+    def main(username, password, changes, fixup):
+        async def something():
+            client = TeslaApiClient(username, password)
+            vehicles = await client.list_vehicles()
+            v = vehicles[0]
+            data = await v.full_update()
+
+            was_mod = False
+            add_remove = ["add", "remove"]
+            patches = []
+
+            colors = {"change": "yellow", "add": "green", "remove": "red"}
+            click.echo("Checking for changes in the json response.")
+            for change, key, value in list(dictdiffer.diff(FULL_DATA, v._data)):
+                if changes == "all" or change == changes:
+                    if change in add_remove:
+                        v = "%s %s" % value[0]
+                    else:
+                        v = "old %s new %s" % value
+
+                    click.secho(
+                        "%s %s %s" % (change, key, v),
+                        fg=colors[change],
+                    )
+
+                    if fixup is True:
+                        if change in ["add", "remove"]:
+                            patches.append([change, key, value])
+
+            if fixup is True and len(patches):
+                click.echo("Updated FULL_DATA:")
+                result = dictdiffer.patch(patches, FULL_DATA)
+                p = json.dumps(result, sort_keys=True, indent=4)
+                print("FULL_DATA = %s" % p)
+
+
+
+
+            asyncio.run(something())
+
+
+
+
+
+    main()

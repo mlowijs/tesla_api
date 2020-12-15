@@ -1,5 +1,4 @@
-"""Summary
-"""
+"""Vehicle related stuff."""
 import asyncio
 import json
 import logging
@@ -24,16 +23,17 @@ _LOGGER = logging.getLogger(__name__)
 
 class Vehicle:
 
-    """Main interface for everything relating to the vehicle.
+    """Main class to interact with the vehicle
 
     Attributes:
-        charge (TYPE): Description
-        climate (TYPE): Anything related to climate control
-        controls (TYPE): Interface for what you can control (like the app)
-        media (TYPE): What's on screen stuff
-        gui (TYPE): Anything regarding the gui, unit type etc
-        config (TYPE): Anything config related
-        battery (TYPE): Anything battery related
+        battery (`~tesla_api.battery.Battery`): Battery related stuff
+        charge (`~tesla_api.charge.Charge`): Charge related stuff
+        climate (`~tesla_api.climate.Climate`): Climate related stuff
+        config (`~tesla_api.config.Config`): Config related stuff
+        controls (`~tesla_api.controls.Controls`): Controls related stuff
+        gui (`~tesla_api.gui.Gui`): Gui related stuff
+        media (`~tesla_api.media.Media`): Media related stuff
+        status (`~tesla_api.state.State`): Status related stuff
     """
 
     def __init__(
@@ -45,9 +45,9 @@ class Vehicle:
         """Summary
 
         Args:
-            api_client (TYPE): Description
-            vehicle (TYPE): Description
-            lock (asyncio.Lock)
+            api_client (`~tesla_api.controls.Controls`): Client used to calls so the api.
+            data (Dict, optional): Data from the api.
+            lock (Optional[Union[None, asyncio.Lock]], optional): Better safe then sorry.
         """
         if lock is None:
             self._lock = asyncio.Lock()
@@ -67,6 +67,11 @@ class Vehicle:
         self.config = Config(self)
 
     async def get_charge_state(self):
+        """Get the charge state as a dict
+
+        Returns:
+            dict: Response from the api
+        """
         data = await self._api_client.get(
             f"vehicles/{self.id}/data_request/charge_state"
         )
@@ -94,8 +99,8 @@ class Vehicle:
             size (int, optional): Size of the image.
 
         Returns:
-            bytes: bytes png
-        """  # untested.
+            bytes: bytes for png.
+        """
         params = {
             "model": "m" + self.vin[3].lower(),
             "bkba_opt": 1,
@@ -198,7 +203,7 @@ class Vehicle:
         return await self._api_client.get(f"vehicles/{self.id}/nearby_charging_sites")
 
     async def is_mobile_access_enabled(self):
-        """
+        """Is mobile access enabled.
 
         Returns:
             TYPE: Description
@@ -314,13 +319,13 @@ class Vehicle:
         password - The account password to reauthenticate.
 
         Args:
-            password (None, optional): Description
+            password (None, optional): password to your telsa account
 
         Returns:
-            TYPE: Description
+            bool: True on successfull command
 
         Raises:
-            ParameterError: Description
+            ValueError: Description
         """
         password = password or self._api_client._password
         if password is None:
@@ -342,14 +347,14 @@ class Vehicle:
         tms = timestamp_ms or time.time() * 1000
         data = {
             "type": "share_ext_content_raw",
-            "value": {
-                "android.intent.extra.TEXT": ""
-            },
+            "value": {"android.intent.extra.TEXT": ""},
             "locale": locale,
             "timestamp_ms": int(tms),
         }
 
-        return await self._api_client.post(f"vehicles/{self.id}/command/share", data=data)
+        return await self._api_client.post(
+            f"vehicles/{self.id}/command/share", data=data
+        )
 
     async def refresh(self):
         """Refresh attributes for this class."""
@@ -392,10 +397,20 @@ class Vehicle:
 
     @property
     def api_version(self) -> int:
+        """Api version
+
+        Returns:
+            int: The api version
+        """
         return self._data["vehicle_state"]["api_version"]
 
     @property
     def car_version(self) -> str:
+        """Car version
+
+        Returns:
+            str: Fx 2020.44.10.1 955dc1dd145e
+        """
         return self._data["vehicle_state"]["car_version"]
 
     @property
@@ -425,8 +440,12 @@ class Vehicle:
         return self._data["access_type"]
 
     @property
-    def display_name(self):
-        # This is only a string if owner has givin it a name.
+    def name(self) -> Optional[str]:
+        """Display name
+
+        Returns:
+            str: the name the owner has given the car or None
+        """
         return self._data["display_name"]
 
     @property
@@ -438,6 +457,12 @@ class Vehicle:
         return self._data["color"] or self._data["vehicle_config"]["exterior_color"]
 
     @property
-    def option_codes(self):
-        """Don't trust these."""
+    def option_codes(self) -> list:
+        """Option codes
+
+        Note:
+            These can not be trusted.
+
+
+        """
         return self._data["option_codes"].split(",")

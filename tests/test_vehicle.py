@@ -9,7 +9,7 @@ async def test_Vehicle_attributes(vehicle):
     assert vehicle.api_version == 12
     assert vehicle.car_version == "2020.44.10.1 955dc1dd145e"
     assert vehicle.color == "SolidBlack"
-    assert vehicle.display_name == "888888"
+    assert vehicle.name == "888888"
     assert vehicle.id == 999999999999
     assert vehicle.id_s == "999999999999"
     assert vehicle.in_service is False

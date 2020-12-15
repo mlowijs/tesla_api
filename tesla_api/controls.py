@@ -1,8 +1,8 @@
-import asyncio
 from functools import partialmethod
 
 STATE_VENT = 'vent'
 STATE_CLOSE = 'close'
+
 
 class Controls:
     def __init__(self, vehicle):

@@ -4,9 +4,9 @@ from datetime import datetime, timedelta
 
 import aiohttp
 
+from .energy import Energy
 from .exceptions import ApiError, AuthenticationError, VehicleUnavailableError
 from .vehicle import Vehicle
-from .energy import Energy
 
 TESLA_API_BASE_URL = 'https://owner-api.teslamotors.com/'
 TOKEN_URL = TESLA_API_BASE_URL + 'oauth/token'
@@ -14,6 +14,7 @@ API_URL = TESLA_API_BASE_URL + 'api/1'
 
 OAUTH_CLIENT_ID = '81527cff06843c8634fdc09e8ac0abefb46ac849f38fe1e431c2ef2106796384'
 OAUTH_CLIENT_SECRET = 'c7257eb71a564034f9419ee651c7d0e5f7aa6bfbd18bafb5c5c033b093bb2fa3'
+
 
 class TeslaApiClient:
     callback_update = None  # Called when vehicle's state has been updated.
@@ -120,4 +121,5 @@ class TeslaApiClient:
         return [Vehicle(self, vehicle) for vehicle in await self.get('vehicles')]
 
     async def list_energy_sites(self):
-        return [Energy(self, product['energy_site_id']) for product in await self.get('products') if 'energy_site_id' in product]
+        return [Energy(self, product['energy_site_id'])
+                for product in await self.get('products') if 'energy_site_id' in product]

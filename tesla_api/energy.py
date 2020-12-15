@@ -11,10 +11,10 @@
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in all
 # copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -24,7 +24,7 @@
 # SOFTWARE.
 
 from datetime import date, datetime, time
-from typing import Any, Dict, Optional, Union
+from typing import Optional, Union
 
 
 class Energy:
@@ -42,23 +42,22 @@ class Energy:
     # Helper functions for get_energy_site_info
     async def get_backup_reserve_percent(self):
         info = await self.get_energy_site_info()
-        return int(info["backup_reserve_percent"])
+        return int(info['backup_reserve_percent'])
 
     async def get_operating_mode(self):
         info = await self.get_energy_site_info()
-        return info["default_real_mode"]
+        return info['default_real_mode']
 
     async def get_version(self):
         info = await self.get_energy_site_info()
-        return info["version"]
+        return info['version']
 
     async def get_battery_count(self):
         info = await self.get_energy_site_info()
-        return int(info["battery_count"])
-
+        return int(info['battery_count'])
 
     async def get_energy_site_calendar_history_data(
-            self, kind = 'energy', period = 'day',
+            self, kind='energy', period='day',
             end_date: Optional[Union[str, date]] = None) -> dict:
         """Return historical energy data.
 
@@ -93,25 +92,25 @@ class Energy:
             'energy_sites/{}/calendar_history'.format(self._energy_site_id), params=params)
 
     async def get_energy_site_live_status(self):
-        return await self._api_client.get('energy_sites/{}/live_status'.format(self._energy_site_id))
+        return await self._api_client.get(
+            'energy_sites/{}/live_status'.format(self._energy_site_id))
 
     # Helper functions for get_energy_site_live_status
     async def get_energy_site_live_status_percentage_charged(self):
         status = await self.get_energy_site_live_status()
-        return int(status["percentage_charged"])
+        return int(status['percentage_charged'])
 
     async def get_energy_site_live_status_energy_left(self):
         status = await self.get_energy_site_live_status()
-        return float(status["energy_left"])
+        return float(status['energy_left'])
 
     async def get_energy_site_live_status_total_pack_energy(self):
         status = await self.get_energy_site_live_status()
-        return int(status["total_pack_energy"])
+        return int(status['total_pack_energy'])
 
     async def get_solar_power(self):
         status = await self.get_energy_site_live_status()
-        return int(status["solar_power"])
-
+        return int(status['solar_power'])
 
     # Setting of the backup_reserve_percent used in self_consumption
     # (i.e. self-powered mode).
@@ -121,7 +120,7 @@ class Energy:
         assert 0 <= backup_reserve_percent <= 100
         return await self._api_client.post(
             endpoint='energy_sites/{}/backup'.format(self._energy_site_id),
-            data={"backup_reserve_percent": backup_reserve_percent}
+            data={'backup_reserve_percent': backup_reserve_percent}
         )
 
     # Correspondence between mode names and the Tesla app:
@@ -132,7 +131,7 @@ class Energy:
     async def set_operating_mode(self, mode):
         return await self._api_client.post(
             endpoint='energy_sites/{}/operation'.format(self._energy_site_id),
-            data={"default_real_mode": mode}
+            data={'default_real_mode': mode}
         )
 
     # helper functions for set_operating_mode

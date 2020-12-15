@@ -1,12 +1,11 @@
-import asyncio
-
 class Charge:
     def __init__(self, vehicle):
         self._vehicle = vehicle
         self._api_client = vehicle._api_client
 
     async def get_state(self):
-        return await self._api_client.get('vehicles/{}/data_request/charge_state'.format(self._vehicle.id))
+        return await self._api_client.get(
+            'vehicles/{}/data_request/charge_state'.format(self._vehicle.id))
 
     async def start_charging(self):
         return await self._vehicle._command('charge_start')

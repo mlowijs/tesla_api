@@ -1,0 +1,6 @@
+flake8-bugbear
+#flake8-docstrings  # TODO: Resolve violations.
+flake8-import-order
+flake8-quotes
+pytest
+pytest-cov

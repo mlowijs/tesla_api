@@ -10,7 +10,7 @@ from .misc import cast
 class State(Stub):
     __key = "drive_state"
 
-    async def refresh(self):
+    async def refresh(self) -> dict:
         return await self._vehicle.get_drive_state()
 
     @property
@@ -53,7 +53,7 @@ class State(Stub):
         return self._vehicle._data[self.__key]["native_type"]
 
     @property
-    def power(self):
+    def power(self) -> int:
         """Power usage right know. in wpm or wmk"""
         return self._vehicle._data[self.__key]["power"]
 

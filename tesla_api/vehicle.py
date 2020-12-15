@@ -26,21 +26,21 @@ class Vehicle:
             ApiError on unsuccessful response.
         """
         # Commands won't work if car is offline, so try and wake car first.
-        if self.state != 'online':
+        if self.state != "online":
             await self.wake_up()
 
-        endpoint = 'vehicles/{}/command/{}'.format(self.id, command_endpoint)
+        endpoint = "vehicles/{}/command/{}".format(self.id, command_endpoint)
         try:
             res = await self._api_client.post(endpoint, data)
         except VehicleUnavailableError:
             # If first attempt, retry with a wake up.
             if _retry:
-                self._vehicle['state'] = 'offline'
+                self._vehicle["state"] = "offline"
                 return await self._command(command_endpoint, data, _retry=False)
             raise
 
-        if res.get('result') is not True:
-            raise ApiError(res.get('reason', ''))
+        if res.get("result") is not True:
+            raise ApiError(res.get("reason", ""))
 
     def _update_vehicle(self, state):
         self._vehicle = state
@@ -48,21 +48,24 @@ class Vehicle:
             asyncio.create_task(self._api_client.callback_update(self))
 
     async def is_mobile_access_enabled(self):
-        return await self._api_client.get('vehicles/{}/mobile_enabled'.format(self.id))
+        return await self._api_client.get("vehicles/{}/mobile_enabled".format(self.id))
 
     async def get_data(self):
-        data = await self._api_client.get('vehicles/{}/vehicle_data'.format(self.id))
+        data = await self._api_client.get("vehicles/{}/vehicle_data".format(self.id))
         self._update_vehicle({k: v for k, v in data.items() if not isinstance(v, dict)})
         return data
 
     async def get_state(self):
-        return await self._api_client.get('vehicles/{}/data_request/vehicle_state'.format(self.id))
+        return await self._api_client.get(
+            "vehicles/{}/data_request/vehicle_state".format(self.id))
 
     async def get_drive_state(self):
-        return await self._api_client.get('vehicles/{}/data_request/drive_state'.format(self.id))
+        return await self._api_client.get(
+            "vehicles/{}/data_request/drive_state".format(self.id))
 
     async def get_gui_settings(self):
-        return await self._api_client.get('vehicles/{}/data_request/gui_settings'.format(self.id))
+        return await self._api_client.get(
+            "vehicles/{}/data_request/gui_settings".format(self.id))
 
     async def wake_up(self, timeout=-1):  # noqa: C901
         """Attempt to wake up the car.
@@ -84,11 +87,11 @@ class Vehicle:
             delay = timeout / 100
 
         async def _wake():
-            state = await self._api_client.post('vehicles/{}/wake_up'.format(self.id))
+            state = await self._api_client.post("vehicles/{}/wake_up".format(self.id))
             self._update_vehicle(state)
-            while self._vehicle['state'] != 'online':
+            while self._vehicle["state"] != "online":
                 await asyncio.sleep(delay)
-                state = await self._api_client.post('vehicles/{}/wake_up'.format(self.id))
+                state = await self._api_client.post("vehicles/{}/wake_up".format(self.id))
                 self._update_vehicle(state)
 
         if self._api_client.callback_wake_up is not None:
@@ -104,10 +107,10 @@ class Vehicle:
 
         password - The account password to reauthenticate.
         """
-        return await self._command('remote_start_drive', data={'password': password})
+        return await self._command("remote_start_drive", data={"password": password})
 
     async def update(self):
-        self._update_vehicle(await self._api_client.get('vehicles/{}'.format(self.id)))
+        self._update_vehicle(await self._api_client.get("vehicles/{}".format(self.id)))
 
     def __dir__(self):
         """Include _vehicle keys in dir(), which are accessible with __getattr__()."""
@@ -118,4 +121,5 @@ class Vehicle:
         try:
             return self._vehicle[name]
         except KeyError:
-            raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+            raise AttributeError(
+                "'{}' object has no attribute '{}'".format(self.__class__.__name__, name))

@@ -18,4 +18,4 @@ application-import-names = tesla_api
 import-order-style = pycharm
 
 # flake8-quotes
-inline-quotes = '
+inline-quotes = "

@@ -15,7 +15,7 @@ class Vehicle:
         self.climate = Climate(self)
         self.controls = Controls(self)
 
-    async def _command(self, command_endpoint, data=None, _retry=True):
+    async def _command(self, command_endpoint, data=None, _retry=True):  # noqa: C901
         """Handles vehicle commands with the common reason/result response.
 
         Args:
@@ -64,7 +64,7 @@ class Vehicle:
     async def get_gui_settings(self):
         return await self._api_client.get('vehicles/{}/data_request/gui_settings'.format(self.id))
 
-    async def wake_up(self, timeout=-1):
+    async def wake_up(self, timeout=-1):  # noqa: C901
         """Attempt to wake up the car.
 
         Vehicle will be online when this function returns successfully.

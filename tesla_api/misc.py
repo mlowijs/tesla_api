@@ -37,3 +37,59 @@ def cast(value: Optional[Union[str, int]]) -> bool:
         return False
 
     raise ValueError("%s expects value that can be bool")
+
+
+
+
+def diff(old: dict, new: dict, changes: str, fixup: bool):
+    """Helper to identify changes in json reponse. Print out a FULL_DATA dict that can be copy pasted in
+
+    Args:
+        old (dict): The dict we will compare against
+        new (dict):
+        changes (str): What changes you want displayed/Fixed
+                       Possible options: all, add, remove, change
+        fixup (bool): Print out a new dict that can be used to copy pasta over.
+
+
+    Example:
+        diff(FULL_DATA, Vehicle._data, "all", True)
+
+    Returns:
+        dict: copy past this in and run black.
+
+    """
+    from copy import deepcopy
+    import json
+    import click
+    import dictdiffer
+    import pprint
+
+    patches = []
+    add_remove = ["add", "remove"]
+
+    colors = {"change": "yellow", "add": "green", "remove": "red"}
+    click.echo("Checking for changes in the json response.")
+
+    for change, key, value in list(dictdiffer.diff(old, new)):
+        if changes == "all" or change == changes:
+            if change in add_remove:
+                v = "%s %s" % value[0]
+            else:
+                v = "old %s new %s" % value
+
+            click.secho(
+                "%s %s %s" % (change, key, v),
+                fg=colors[change],
+            )
+
+            if fixup is True:
+                if change in add_remove:
+                    patches.append([change, key, value])
+
+    if fixup is True and len(patches):
+        click.echo("Updated full data:\n")
+        result = dictdiffer.patch(patches, old)
+        p = pprint.pprint(result, indent=4)
+        print("FULL_DATA = %s" % p)
+        return result

@@ -216,10 +216,11 @@ for key in KEYS:
 
 
 if __name__ == "__main__":
+    import asyncio
     import click
     from tesla_api import TeslaApiClient
-    from copy import deepcopy
-    import json
+    from tesla_api.misc import diff
+
 
     @click.command(help="Tool to check for diff in api response")
     @click.option("--username", help="Username to your tesla account")
@@ -247,43 +248,11 @@ if __name__ == "__main__":
             client = TeslaApiClient(username, password)
             vehicles = await client.list_vehicles()
             v = vehicles[0]
+            await v.wake_up()
             data = await v.full_update()
 
-            was_mod = False
-            add_remove = ["add", "remove"]
-            patches = []
+            diff(FULL_DATA, v._data, changes, fixup)
 
-            colors = {"change": "yellow", "add": "green", "remove": "red"}
-            click.echo("Checking for changes in the json response.")
-            for change, key, value in list(dictdiffer.diff(FULL_DATA, v._data)):
-                if changes == "all" or change == changes:
-                    if change in add_remove:
-                        v = "%s %s" % value[0]
-                    else:
-                        v = "old %s new %s" % value
-
-                    click.secho(
-                        "%s %s %s" % (change, key, v),
-                        fg=colors[change],
-                    )
-
-                    if fixup is True:
-                        if change in ["add", "remove"]:
-                            patches.append([change, key, value])
-
-            if fixup is True and len(patches):
-                click.echo("Updated FULL_DATA:")
-                result = dictdiffer.patch(patches, FULL_DATA)
-                p = json.dumps(result, sort_keys=True, indent=4)
-                print("FULL_DATA = %s" % p)
-
-
-
-
-            asyncio.run(something())
-
-
-
-
+        asyncio.run(something())
 
     main()

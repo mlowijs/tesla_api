@@ -6,8 +6,8 @@ from typing import cast, Awaitable, Callable, Coroutine, Dict, List, Literal, Ma
 
 import aiohttp
 
-from .datatypes import (BaseResponse, EnergySite, ErrorResponse, ProductsResponse,
-                        TokenParams, TokenResponse, VehiclesResponse)
+from .datatypes import (AuthParamsPassword, AuthParamsRefresh, BaseResponse, EnergySite,
+                        ErrorResponse, ProductsResponse, TokenParams, TokenResponse, VehiclesResponse)
 from .energy import Energy
 from .exceptions import (ApiError, AuthenticationError, VehicleInServiceError,
                          VehicleUnavailableError)
@@ -90,11 +90,11 @@ class TeslaApiClient:
 
     async def _get_new_token(self) -> TokenResponse:
         assert self._email is not None and self._password is not None
-        data = {"grant_type": "password", "email": self._email, "password": self._password}
+        data: AuthParamsPassword = {"grant_type": "password", "email": self._email, "password": self._password}
         return await self._get_token(data)
 
     async def _refresh_token(self, refresh_token: str) -> TokenResponse:
-        data = {"grant_type": "refresh_token", "refresh_token": refresh_token}
+        data: AuthParamsRefresh = {"grant_type": "refresh_token", "refresh_token": refresh_token}
         return await self._get_token(data)
 
     async def authenticate(self) -> None:

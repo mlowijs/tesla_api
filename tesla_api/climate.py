@@ -1,7 +1,6 @@
-import asyncio
 from enum import Enum
 from functools import partialmethod
-from typing import cast, Optional, TYPE_CHECKING
+from typing import Optional, TYPE_CHECKING, cast
 
 from .datatypes import ClimateStateResponse
 
@@ -15,7 +14,6 @@ class SeatPosition(Enum):
     REAR_LEFT = 2
     REAR_CENTER = 4
     REAR_RIGHT = 5
-
 
 
 class Climate:
@@ -38,7 +36,7 @@ class Climate:
         data = {"driver_temp": driver_temperature,
                 "passenger_temp": passenger_temperature or driver_temperature}
         return cast(bool, await self._vehicle._command("set_temps", data))
-    
+
     async def set_seat_heater(self, temp: int = 0,
                               seat: SeatPosition = SeatPosition.DRIVER) -> bool:
         """Set a seat heater.
@@ -55,7 +53,7 @@ class Climate:
 
     async def steering_wheel_heater(self, on: bool) -> bool:
         endpoint = "remote_steering_wheel_heater_request"
-        args = {'on': on}
+        args = {"on": on}
         return cast(bool, await self._vehicle._command(endpoint, args))
     start_steering_wheel_heater = partialmethod(steering_wheel_heater, True)
     stop_steering_wheel_heater = partialmethod(steering_wheel_heater, False)

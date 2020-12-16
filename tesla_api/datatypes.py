@@ -4,10 +4,10 @@ A collection of objects used for typing across the library.
 Mostly this is TypedDict instances used to represent API responses.
 """
 
-from typing import Dict, List, Literal, Optional, TypedDict, Union
+from typing import List, Literal, Optional, TypedDict, Union
 
 # asleep seems to only happen when in service.
-VehicleState = Literal['asleep', 'offline', 'online', 'shutdown']
+VehicleState = Literal["asleep", "offline", "online", "shutdown"]
 
 
 class _BaseResponseBase(TypedDict):
@@ -26,7 +26,7 @@ class CommandResponse(TypedDict):
 class ErrorResponse(TypedDict):
     response: None
     error: str
-    error_description: Literal['']
+    error_description: Literal[""]
 
 
 class ChargeStateResponse(TypedDict):  # TODO
@@ -45,7 +45,7 @@ class ChargeStateResponse(TypedDict):  # TODO
     charge_miles_added_rated: float
     charge_port_cold_weather_mode: Optional[bool]
     charge_port_door_open: bool
-    charge_port_latch: Literal['Blocking']
+    charge_port_latch: Literal["Blocking"]
     charge_rate: float
     charge_to_max_range: bool
     charger_actual_current: int
@@ -53,12 +53,12 @@ class ChargeStateResponse(TypedDict):  # TODO
     charger_pilot_current: int
     charger_power: int
     charger_voltage: int
-    charging_state: Literal['Disconnected']
-    conn_charge_cable: Literal['<invalid>']
+    charging_state: Literal["Disconnected"]
+    conn_charge_cable: Literal["<invalid>"]
     est_battery_range: float
-    fast_charger_brand: Literal['<invalid>']
+    fast_charger_brand: Literal["<invalid>"]
     fast_charger_present: bool
-    fast_charger_type: Literal['<invalid>']
+    fast_charger_type: Literal["<invalid>"]
     ideal_battery_range: float
     managed_charging_active: bool
     managed_charging_start_time: None
@@ -79,7 +79,7 @@ class ClimateStateResponse(TypedDict):  # TODO
     # The Optional attributes here are all None if the car is not awake.
     battery_heater: bool
     battery_heater_no_power: bool
-    climate_keeper_mode: Literal['camp', 'dog', 'off']
+    climate_keeper_mode: Literal["camp", "dog", "off"]
     defrost_mode: int
     driver_temp_setting: float
     fan_status: int
@@ -116,33 +116,33 @@ class DriveStateResponse(TypedDict):
     native_latitude: float
     native_location_supported: int
     native_longitude: float
-    native_type: Literal['wgs']
+    native_type: Literal["wgs"]
     power: int  # TODO: KW?
-    shift_state: Literal[None, 'D', 'P', 'R']  # TODO
+    shift_state: Literal[None, "D", "P", "R"]  # TODO
     speed: Optional[int]  # TODO: mph?
     timestamp: int  # Milliseconds
 
 
 class GUISettingsResponse(TypedDict):
     gui_24_hour_time: bool
-    gui_charge_rate_units: Literal['kW']  # TODO
-    gui_distance_units: Literal['mi/hr', 'km/hr']
-    gui_range_display: Literal['Rated']  # TODO: 'Percent'?
-    gui_temperature_units: Literal['C', 'F']  # TODO
+    gui_charge_rate_units: Literal["kW"]  # TODO
+    gui_distance_units: Literal["mi/hr", "km/hr"]
+    gui_range_display: Literal["Rated"]  # TODO: 'Percent'?
+    gui_temperature_units: Literal["C", "F"]  # TODO
     show_range_units: bool  # TODO
     timestamp: int  # Milliseconds
 
 
 class TokenResponse(TypedDict):
     access_token: str
-    token_type: Literal['bearer']
+    token_type: Literal["bearer"]
     expires_in: int  # Seconds
     refresh_token: str
     created_at: int  # Timestamp (seconds)
 
 
 class _TokenParamsPassword(TypedDict):
-    grant_type: Literal['password']
+    grant_type: Literal["password"]
     client_id: str
     client_secret: str
     email: str
@@ -150,7 +150,7 @@ class _TokenParamsPassword(TypedDict):
 
 
 class _TokenParamsRefresh(TypedDict):
-    grant_type: Literal['refresh_token']
+    grant_type: Literal["refresh_token"]
     client_id: str
     client_secret: str
     refresh_token: str
@@ -162,12 +162,12 @@ TokenParams = Union[_TokenParamsPassword, _TokenParamsRefresh]
 class VehicleConfigResponse(TypedDict):
     can_accept_navigation_requests: bool
     can_actuate_trunks: bool
-    car_special_type: Literal['base']
-    car_type: Literal['models2']
-    charge_port_type: Literal['EU', 'US']
+    car_special_type: Literal["base"]
+    car_type: Literal["models2"]
+    charge_port_type: Literal["EU", "US"]
     ece_restrictions: bool  # UNECE regulations (e.g. limit turning of steering wheel).
     eu_vehicle: bool
-    exterior_color: Literal['Black']
+    exterior_color: Literal["Black"]
     has_air_suspension: bool
     has_ludicrous_mode: bool
     motorized_charge_port: bool
@@ -175,14 +175,14 @@ class VehicleConfigResponse(TypedDict):
     rear_seat_heaters: int  # TODO
     rear_seat_type: int  # 0
     rhd: bool  # Right-hand drive
-    roof_color: Literal['Glass']
+    roof_color: Literal["Glass"]
     seat_type: int  # 2 = 2020 seats
-    spoiler_type: Literal['None']
+    spoiler_type: Literal["None"]
     sun_roof_installed: Literal[0]  # 0 = Not installed
-    third_row_seats: Literal['None']
+    third_row_seats: Literal["None"]
     timestamp: int  # Milliseconds
     use_range_badging: bool  # ??
-    wheel_type: Literal['Slipstream19Carbon']
+    wheel_type: Literal["Slipstream19Carbon"]
 
 
 class _VehicleStateMedia(TypedDict):
@@ -193,10 +193,11 @@ class _VehicleStateSoftwareUpdate(TypedDict):
     download_perc: int
     expected_duration_sec: int
     install_perc: int
-    # '' = No firmware updates available (if duration is not 0, then other updates are available, such as a games update).
+    # '' = No firmware updates available (if duration is not 0,
+    # then other updates are available, such as a games update).
     # available = Downloaded, ready to install.
     # downloading_wifi_wait = Waiting for WiFi connection to resume download.
-    status: Literal['', 'available', 'downloading', 'downloading_wifi_wait', 'scheduled']
+    status: Literal["", "available", "downloading", "downloading_wifi_wait", "scheduled"]
     # Empty string if no version available or not a firmware update.
     version: str
 
@@ -211,7 +212,7 @@ class _VehicleStateSpeedLimit(TypedDict):
 
 class _VehicleStateResponseBase(TypedDict):
     api_version: int
-    autopark_state_v2: Literal['standby', 'ready', 'unavailable']
+    autopark_state_v2: Literal["standby", "ready", "unavailable"]
     calendar_supported: bool
     car_version: str  # Software version
     # 0 = off, 2,3,4 = ??
@@ -242,10 +243,10 @@ class _VehicleStateResponseBase(TypedDict):
 
 
 class VehicleStateResponse(_VehicleStateResponseBase, total=False):
-    autopark_style: Literal['dead_man']
+    autopark_style: Literal["dead_man"]
     homelink_device_count: int
     homelink_nearby: bool
-    last_autopark_error: Literal['no_error']
+    last_autopark_error: Literal["no_error"]
     smart_summon_available: bool
     summon_standby_mode_enabled: bool
 
@@ -264,7 +265,7 @@ class _VehiclesIdResponseBase(TypedDict):
     in_service: bool
     id_s: str  # String version of id.
     calendar_enabled: bool
-    access_type: Literal['OWNER']
+    access_type: Literal["OWNER"]
     api_version: int
     backseat_token: None  # ??
     backseat_token_updated_at: None  # ??

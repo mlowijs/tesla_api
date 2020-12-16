@@ -2,7 +2,8 @@ import asyncio
 import json
 from datetime import datetime, timedelta
 from types import TracebackType
-from typing import cast, Awaitable, Callable, Coroutine, Dict, List, Literal, Mapping, Optional, Type, TypedDict, TypeVar, Union
+from typing import (Awaitable, Callable, Coroutine, List, Literal, Mapping, Optional,
+                    Type, TypedDict, TypeVar, Union, cast)
 
 import aiohttp
 
@@ -13,8 +14,8 @@ from .exceptions import (ApiError, AuthenticationError, VehicleInServiceError,
                          VehicleUnavailableError)
 from .vehicle import Vehicle
 
-__all__ = ('Energy', 'Vehicle', 'TeslaApiClient', 'ApiError', 'AuthenticationError',
-           'VehicleInServiceError', 'VehicleUnavailableError')
+__all__ = ("Energy", "Vehicle", "TeslaApiClient", "ApiError", "AuthenticationError",
+           "VehicleInServiceError", "VehicleUnavailableError")
 
 TESLA_API_BASE_URL = "https://owner-api.teslamotors.com/"
 TOKEN_URL = TESLA_API_BASE_URL + "oauth/token"
@@ -42,9 +43,12 @@ class _AuthParamsRefresh(TypedDict):
 AuthParams = Union[_AuthParamsPassword, _AuthParamsRefresh]
 T = TypeVar("T", bound="TeslaApiClient")
 
+
 class TeslaApiClient:
-    callback_update: Optional[Callable[[Vehicle], Awaitable[None]]] = None  # Called when vehicle's state has been updated.
-    callback_wake_up: Optional[Callable[[Vehicle], Awaitable[None]]] = None  # Called when attempting to wake a vehicle.
+    # Called when vehicle's state has been updated.
+    callback_update: Optional[Callable[[Vehicle], Awaitable[None]]] = None
+    # Called when attempting to wake a vehicle.
+    callback_wake_up: Optional[Callable[[Vehicle], Awaitable[None]]] = None
     timeout = 30  # Default timeout for operations such as Vehicle.wake_up().
 
     def __init__(self, email: Optional[str] = None, password: Optional[str] = None,
@@ -90,7 +94,8 @@ class TeslaApiClient:
 
     async def _get_new_token(self) -> TokenResponse:
         assert self._email is not None and self._password is not None
-        data: _AuthParamsPassword = {"grant_type": "password", "email": self._email, "password": self._password}
+        data: _AuthParamsPassword = {"grant_type": "password", "email": self._email,
+                                     "password": self._password}
         return await self._get_token(data)
 
     async def _refresh_token(self, refresh_token: str) -> TokenResponse:
@@ -110,7 +115,7 @@ class TeslaApiClient:
     def _get_headers(self) -> AuthHeaders:
         assert self._token is not None
         return {
-            'Authorization': 'Bearer {}'.format(self._token['access_token'])
+            "Authorization": "Bearer {}".format(self._token["access_token"])
         }
 
     async def get(self, endpoint: str, params: Optional[Mapping[str, str]] = None) -> object:
@@ -125,8 +130,11 @@ class TeslaApiClient:
         await self.authenticate()
         url = "{}/{}".format(API_URL, endpoint)
 
-        async with self._session.request(method, url, headers=self._get_headers(), json=data, params=params) as resp:
-            response_json = await cast(Coroutine[None, None, Union[BaseResponse, ErrorResponse]], resp.json())
+        async with self._session.request(method, url, headers=self._get_headers(),
+                                         json=data, params=params) as resp:
+            # TODO(Mypy): https://github.com/python/mypy/issues/8884
+            r = cast(Coroutine[None, None, Union[BaseResponse, ErrorResponse]], resp.json())
+            response_json = await r
 
         if "error" in response_json:
             error_response = cast(ErrorResponse, response_json)
@@ -141,12 +149,13 @@ class TeslaApiClient:
         return response_json["response"]
 
     async def list_vehicles(self) -> List[Vehicle]:
-        vehicles = cast(VehiclesResponse, await self.get('vehicles'))
+        vehicles = cast(VehiclesResponse, await self.get("vehicles"))
         return [Vehicle(self, v) for v in vehicles]
 
     async def list_energy_sites(self) -> List[Energy]:
         products = cast(ProductsResponse, await self.get("products"))
-        return [Energy(self, cast(EnergySite, p)["energy_site_id"]) for p in products if "energy_site_id" in p]
+        return [Energy(self, cast(EnergySite, p)["energy_site_id"])
+                for p in products if "energy_site_id" in p]
 
     async def __aenter__(self: T) -> T:
         return self

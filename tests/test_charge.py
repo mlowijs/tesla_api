@@ -6,26 +6,25 @@ from conftest import CHARGE_STATE, vehi
 async def test_Vehicle_Charge_attributes(vehicle):
     charge = vehicle.charge
     assert charge.actual_current == 0
-    assert charge.charge_current_request == 16
-    assert charge.charge_current_request_max == 16
-    assert charge.charge_enable_request is True
-    assert charge.charge_energy_added == 22.66
-    assert charge.charge_km_added_ideal == 148.86
-    assert charge.charge_km_added_rated == 148.86
-    assert charge.charge_limit == 69
-    assert charge.charge_limit_max == 100
-    assert charge.charge_limit_min == 50
-    assert charge.charge_limit_std == 90
-    assert charge.charge_miles_added_ideal == 92.5
-    assert charge.charge_miles_added_rated == 92.5
-    assert charge.charge_port_cold_weather_mode is False
-    assert charge.charge_port_door_open is False
-    assert charge.charge_port_latch is True
-    assert charge.charge_rate == 0.0
-    assert charge.charge_to_max_range is False
+    assert charge.current_request == 16
+    assert charge.current_request_max == 16
+    assert charge.enable_request is True
+    assert charge.energy_added == 22.66
+    assert charge.km_added_ideal == 148.86
+    assert charge.km_added_rated == 148.86
+    assert charge.limit == 69
+    assert charge.limit_max == 100
+    assert charge.limit_min == 50
+    assert charge.limit_std == 90
+    assert charge.miles_added_ideal == 92.5
+    assert charge.miles_added_rated == 92.5
+    assert charge.port_cold_weather_mode is False
+    assert charge.port_door_open is False
+    assert charge.port_latch is True
+    assert charge.rate == 0.0
+    assert charge.to_max_range is False
     assert charge.charging_state == "Disconnected"
     assert charge.conn_charge_cable == "<invalid>"
-    assert charge.estimated_battery_range == 140.2
     assert charge.fast_charger_brand == "<invalid>"
     assert charge.fast_charger_present is False
     assert charge.fast_charger_type == "<invalid>"

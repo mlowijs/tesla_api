@@ -1,10 +1,11 @@
 import asyncio
-from typing import cast, Any, Iterable, List, Mapping, Optional, TYPE_CHECKING
+from typing import Any, Iterable, List, Mapping, Optional, TYPE_CHECKING, cast
 
 from .charge import Charge
 from .climate import Climate
 from .controls import Controls
-from .datatypes import CommandResponse, DriveStateResponse, GUISettingsResponse, VehicleDataResponse, VehiclesIdResponse, VehicleState, VehicleStateResponse
+from .datatypes import (CommandResponse, DriveStateResponse, GUISettingsResponse,
+                        VehicleDataResponse, VehicleState, VehicleStateResponse, VehiclesIdResponse)
 from .exceptions import ApiError, VehicleUnavailableError
 
 if TYPE_CHECKING:
@@ -28,7 +29,7 @@ class Vehicle:
     backseat_token: None
     backseat_token_updated_at: None
 
-    def __init__(self, api_client: 'TeslaApiClient', vehicle: VehiclesIdResponse):
+    def __init__(self, api_client: "TeslaApiClient", vehicle: VehiclesIdResponse):
         self._api_client = api_client
         self._vehicle = vehicle
 
@@ -36,7 +37,7 @@ class Vehicle:
         self.climate = Climate(self)
         self.controls = Controls(self)
 
-    async def _command(self, command_endpoint: str, data: Optional[Mapping[str, object]] = None,
+    async def _command(self, command_endpoint: str, data: Optional[Mapping[str, object]] = None,  # noqa: C901
                        _retry: bool = True) -> None:
         """Handles vehicle commands with the common reason/result response.
 
@@ -79,7 +80,8 @@ class Vehicle:
         endpoint = "vehicles/{}/vehicle_data".format(self.id)
         data = cast(VehicleDataResponse, await self._api_client.get(endpoint))
 
-        vehicle = cast(VehiclesIdResponse, {k: v for k,v in data.items() if not isinstance(v, dict)})
+        vehicle = cast(VehiclesIdResponse, {k: v for k, v in data.items()
+                                            if not isinstance(v, dict)})
         self._update_vehicle(vehicle)
 
         return data
@@ -96,7 +98,7 @@ class Vehicle:
         endpoint = "vehicles/{}/data_request/gui_settings".format(self.id)
         return cast(GUISettingsResponse, await self._api_client.get(endpoint))
 
-    async def wake_up(self, timeout: Optional[float] = -1) -> None:
+    async def wake_up(self, timeout: Optional[float] = -1) -> None:  # noqa: C901
         """Attempt to wake up the car.
 
         Vehicle will be online when this function returns successfully.

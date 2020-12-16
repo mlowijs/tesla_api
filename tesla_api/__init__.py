@@ -3,7 +3,7 @@ import json
 from datetime import datetime, timedelta
 from types import TracebackType
 from typing import (Awaitable, Callable, Coroutine, List, Literal, Mapping, Optional,
-                    Type, TypedDict, TypeVar, Union, cast)
+                    Type, TypeVar, TypedDict, Union, cast)
 
 import aiohttp
 

@@ -25,7 +25,7 @@
 
 import asyncio
 from datetime import date, datetime, time
-from typing import cast, Literal, Optional, Union, TYPE_CHECKING
+from typing import cast, Any, Dict, Literal, Optional, Union, TYPE_CHECKING
 
 from .datatypes import EnergySiteInfoResponse, EnergySiteLiveStatusResponse
 
@@ -64,15 +64,17 @@ class Energy:
         return int(info["battery_count"])  # TODO
 
     async def get_energy_site_calendar_history_data(
-            self, kind="energy", period="day",
-            end_date: Optional[Union[str, date]] = None) -> dict:
+            self, kind: Literal["power", "energy", "self_consumption"] = "energy",
+            period: Literal["day", "week", "month", "year", "lifetime"] = "day",
+            # TODO: Find out what return type is for this endpoint and add to datatypes.
+            end_date: Optional[Union[str, date]] = None) -> Dict[str, Any]:  # type: ignore[misc]
         """Return historical energy data.
 
         Args:
             kind: [power, energy, self_consumption]
             period: Amount of time to include in report. One of day, week, month, year,
-                and lifetime. When kind is 'power', this parameter is ignored, and the
-                period is always 'day'.
+                and lifetime. When kind is "power", this parameter is ignored, and the
+                period is always "day".
             end_date: A date/datetime object, or a str in ISO 8601 format
                 (e.g. 2019-12-23T17:39:18.546Z). The response report interval ends at this
                 datetime and starts at the beginning of the given period. For example,

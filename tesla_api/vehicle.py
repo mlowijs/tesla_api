@@ -51,18 +51,18 @@ class Vehicle:
         if self.state != "online":
             await self.wake_up()
 
-        endpoint = 'vehicles/{}/command/{}'.format(self.id, command_endpoint)
+        endpoint = "vehicles/{}/command/{}".format(self.id, command_endpoint)
         try:
             res = cast(CommandResponse, await self._api_client.post(endpoint, data))
-        except VehicleUnavailableError as e:
+        except VehicleUnavailableError:
             # If first attempt, retry with a wake up.
             if _retry:
-                self._vehicle['state'] = 'offline'
+                self._vehicle["state"] = "offline"
                 await self._command(command_endpoint, data, _retry=False)
             raise
 
-        if res.get('result') is not True:
-            raise ApiError(res.get('reason', ''))
+        if res.get("result") is not True:
+            raise ApiError(res.get("reason", ""))
 
     def _update_vehicle(self, state: VehiclesIdResponse) -> None:
         self._vehicle = state
@@ -73,10 +73,10 @@ class Vehicle:
             asyncio.create_task(self._api_client.callback_update(self))
 
     async def is_mobile_access_enabled(self) -> bool:
-        return cast(bool, await self._api_client.get('vehicles/{}/mobile_enabled'.format(self.id)))
+        return cast(bool, await self._api_client.get("vehicles/{}/mobile_enabled".format(self.id)))
 
     async def get_data(self) -> VehicleDataResponse:
-        endpoint = 'vehicles/{}/vehicle_data'.format(self.id)
+        endpoint = "vehicles/{}/vehicle_data".format(self.id)
         data = cast(VehicleDataResponse, await self._api_client.get(endpoint))
 
         vehicle = cast(VehiclesIdResponse, {k: v for k,v in data.items() if not isinstance(v, dict)})
@@ -85,15 +85,15 @@ class Vehicle:
         return data
 
     async def get_state(self) -> VehicleStateResponse:
-        endpoint = 'vehicles/{}/data_request/vehicle_state'.format(self.id)
+        endpoint = "vehicles/{}/data_request/vehicle_state".format(self.id)
         return cast(VehicleStateResponse, await self._api_client.get(endpoint))
 
     async def get_drive_state(self) -> DriveStateResponse:
-        endpoint = 'vehicles/{}/data_request/drive_state'.format(self.id)
+        endpoint = "vehicles/{}/data_request/drive_state".format(self.id)
         return cast(DriveStateResponse, await self._api_client.get(endpoint))
 
     async def get_gui_settings(self) -> GUISettingsResponse:
-        endpoint = 'vehicles/{}/data_request/gui_settings'.format(self.id)
+        endpoint = "vehicles/{}/data_request/gui_settings".format(self.id)
         return cast(GUISettingsResponse, await self._api_client.get(endpoint))
 
     async def wake_up(self, timeout: Optional[float] = -1) -> None:
@@ -108,15 +108,18 @@ class Vehicle:
         Raises:
             VehicleUnavailableError: Timeout exceeded without success.
         """
-        if timeout is not None and timeout < 0:
-            timeout = self._api_client.timeout
-        delay = timeout / 100
+        if timeout is None:
+            delay = 2
+        else:
+            if timeout <= 0:
+                timeout = self._api_client.timeout
+            delay = timeout / 100
 
         async def _wake() -> None:
-            endpoint = 'vehicles/{}/wake_up'.format(self.id)
+            endpoint = "vehicles/{}/wake_up".format(self.id)
             state = cast(VehiclesIdResponse, await self._api_client.post(endpoint))
             self._update_vehicle(state)
-            while self._vehicle['state'] != 'online':
+            while self._vehicle["state"] != "online":
                 await asyncio.sleep(delay)
                 state = cast(VehiclesIdResponse, await self._api_client.post(endpoint))
                 self._update_vehicle(state)
@@ -134,10 +137,10 @@ class Vehicle:
 
         password - The account password to reauthenticate.
         """
-        return cast(bool, await self._command('remote_start_drive', {'password': password}))
+        return cast(bool, await self._command("remote_start_drive", {"password": password}))
 
     async def update(self) -> None:
-        endpoint = 'vehicles/{}'.format(self.id)
+        endpoint = "vehicles/{}".format(self.id)
         vehicle = cast(VehiclesIdResponse, await self._api_client.get(endpoint))
         self._update_vehicle(vehicle)
 
@@ -150,4 +153,5 @@ class Vehicle:
         try:
             return self._vehicle[name]  # type: ignore[misc]
         except KeyError:
-            raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+            raise AttributeError(
+                "'{}' object has no attribute '{}'".format(self.__class__.__name__, name))

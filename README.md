@@ -61,4 +61,13 @@ async def main():
         email = input("Email> ")
         password = input("Password> ")
     client = TeslaApiClient(email, password, token, on_new_token=save_token)
+    ...
+```
+
+If you only want to verify and save a user's token for later use,
+you could use the `authenticate()` method:
+```python
+async def main():
+    async with TeslaApiClient(email, password, on_new_token=save_token) as client:
+        await client.authenticate()
 ```

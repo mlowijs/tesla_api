@@ -8,20 +8,20 @@ import aiohttp
 
 from .datatypes import (BaseResponse, EnergySite, ErrorResponse, ProductsResponse,
                         TokenParams, TokenResponse, VehiclesResponse)
+from .energy import Energy
 from .exceptions import (ApiError, AuthenticationError, VehicleInServiceError,
                          VehicleUnavailableError)
 from .vehicle import Vehicle
-from .energy import Energy
 
 __all__ = ('Energy', 'Vehicle', 'TeslaApiClient', 'ApiError', 'AuthenticationError',
            'VehicleInServiceError', 'VehicleUnavailableError')
 
-TESLA_API_BASE_URL = 'https://owner-api.teslamotors.com/'
-TOKEN_URL = TESLA_API_BASE_URL + 'oauth/token'
-API_URL = TESLA_API_BASE_URL + 'api/1'
+TESLA_API_BASE_URL = "https://owner-api.teslamotors.com/"
+TOKEN_URL = TESLA_API_BASE_URL + "oauth/token"
+API_URL = TESLA_API_BASE_URL + "api/1"
 
-OAUTH_CLIENT_ID = '81527cff06843c8634fdc09e8ac0abefb46ac849f38fe1e431c2ef2106796384'
-OAUTH_CLIENT_SECRET = 'c7257eb71a564034f9419ee651c7d0e5f7aa6bfbd18bafb5c5c033b093bb2fa3'
+OAUTH_CLIENT_ID = "81527cff06843c8634fdc09e8ac0abefb46ac849f38fe1e431c2ef2106796384"
+OAUTH_CLIENT_SECRET = "c7257eb71a564034f9419ee651c7d0e5f7aa6bfbd18bafb5c5c033b093bb2fa3"
 
 
 class AuthHeaders(TypedDict):
@@ -72,8 +72,8 @@ class TeslaApiClient:
 
     async def _get_token(self, data: AuthParams) -> TokenResponse:
         request_data = cast(TokenParams, {
-            'client_id': OAUTH_CLIENT_ID,
-            'client_secret': OAUTH_CLIENT_SECRET,
+            "client_id": OAUTH_CLIENT_ID,
+            "client_secret": OAUTH_CLIENT_SECRET,
             **data
         })
 
@@ -90,22 +90,22 @@ class TeslaApiClient:
 
     async def _get_new_token(self) -> TokenResponse:
         assert self._email is not None and self._password is not None
-        return await self._get_token({'grant_type': 'password', 'email': self._email,
-                                      'password': self._password})
+        data = {"grant_type": "password", "email": self._email, "password": self._password}
+        return await self._get_token(data)
 
     async def _refresh_token(self, refresh_token: str) -> TokenResponse:
-        return await self._get_token({'grant_type': 'refresh_token',
-                                      'refresh_token': refresh_token})
+        data = {"grant_type": "refresh_token", "refresh_token": refresh_token}
+        return await self._get_token(data)
 
     async def authenticate(self) -> None:
         if not self._token:
             self._token = await self._get_new_token()
 
-        expiry_time = timedelta(seconds=self._token['expires_in'])
-        expiration_date = datetime.fromtimestamp(self._token['created_at']) + expiry_time
+        expiry_time = timedelta(seconds=self._token["expires_in"])
+        expiration_date = datetime.fromtimestamp(self._token["created_at"]) + expiry_time
 
         if datetime.utcnow() >= expiration_date:
-            self._token = await self._refresh_token(self._token['refresh_token'])
+            self._token = await self._refresh_token(self._token["refresh_token"])
 
     def _get_headers(self) -> AuthHeaders:
         assert self._token is not None
@@ -114,38 +114,38 @@ class TeslaApiClient:
         }
 
     async def get(self, endpoint: str) -> object:
-        return await self._send_request('get', endpoint)
+        return await self._send_request("get", endpoint)
 
     async def post(self, endpoint: str, data: Optional[Mapping[str, object]] = None) -> object:
-        return await self._send_request('post', endpoint, data=data)
+        return await self._send_request("post", endpoint, data=data)
 
-    async def _send_request(self, method: Literal['get', 'post'], endpoint: str, *,
+    async def _send_request(self, method: Literal["get", "post"], endpoint: str, *,
                             data: Optional[Mapping[str, object]] = None) -> object:
         await self.authenticate()
-        url = '{}/{}'.format(API_URL, endpoint)
+        url = "{}/{}".format(API_URL, endpoint)
 
         async with self._session.request(method, url, headers=self._get_headers(), json=data) as resp:
             response_json = await cast(Coroutine[None, None, Union[BaseResponse, ErrorResponse]], resp.json())
 
-        if 'error' in response_json:
+        if "error" in response_json:
             error_response = cast(ErrorResponse, response_json)
-            error = error_response['error']
-            if 'vehicle unavailable' in error:
+            error = error_response["error"]
+            if "vehicle unavailable" in error:
                 raise VehicleUnavailableError()
-            elif 'in service' in error:
+            elif "in service" in error:
                 raise VehicleInServiceError()
             raise ApiError(error)
 
         response_json = cast(BaseResponse, response_json)
-        return response_json['response']
+        return response_json["response"]
 
     async def list_vehicles(self) -> List[Vehicle]:
         vehicles = cast(VehiclesResponse, await self.get('vehicles'))
         return [Vehicle(self, v) for v in vehicles]
 
     async def list_energy_sites(self) -> List[Energy]:
-        products = cast(ProductsResponse, await self.get('products'))
-        return [Energy(self, cast(EnergySite, p)['energy_site_id']) for p in products if 'energy_site_id' in p]
+        products = cast(ProductsResponse, await self.get("products"))
+        return [Energy(self, cast(EnergySite, p)["energy_site_id"]) for p in products if "energy_site_id" in p]
 
     async def __aenter__(self: T) -> T:
         return self

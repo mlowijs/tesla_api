@@ -1,4 +1,4 @@
-from aiohttp.client_exceptions import ClientConnectionError as ClientError
+from aiohttp.client_exceptions import ClientConnectionError as ClientError  # noqa: F401
 
 
 class AuthenticationError(Exception):

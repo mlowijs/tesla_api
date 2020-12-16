@@ -63,11 +63,11 @@ class Energy:
         info = await self.get_energy_site_info()
         return int(info["battery_count"])  # TODO
 
-    async def get_energy_site_calendar_history_data(
+    # TODO: Find out what return type is for this endpoint and add to datatypes.
+    async def get_energy_site_calendar_history_data(  # type: ignore[misc]
             self, kind: Literal["power", "energy", "self_consumption"] = "energy",
             period: Literal["day", "week", "month", "year", "lifetime"] = "day",
-            # TODO: Find out what return type is for this endpoint and add to datatypes.
-            end_date: Optional[Union[str, date]] = None) -> Dict[str, Any]:  # type: ignore[misc]
+            end_date: Optional[Union[str, date]] = None) -> Dict[str, Any]:
         """Return historical energy data.
 
         Args:
@@ -81,7 +81,7 @@ class Energy:
                 with datetime(year=2020, month=5, day=1), this gets all data for May 1st.
                 Defaults to the current time.
         """
-        params = {"kind": kind, "period": period}
+        params: Dict[str, str] = {"kind": kind, "period": period}
 
         if isinstance(end_date, date):
             if not isinstance(end_date, datetime):
@@ -97,8 +97,8 @@ class Energy:
         if end_date is not None:
             params["end_date"] = end_date
 
-        return await self._api_client.get(
-            "energy_sites/{}/calendar_history".format(self._energy_site_id), params=params)
+        endpoint = "energy_sites/{}/calendar_history".format(self._energy_site_id)
+        return cast(Dict[str, Any], await self._api_client.get(endpoint, params=params))
 
     async def get_energy_site_live_status(self) -> EnergySiteLiveStatusResponse:
         endpoint = "energy_sites/{}/live_status".format(self._energy_site_id)

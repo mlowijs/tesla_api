@@ -3,8 +3,31 @@ name: Test tesla_api
 on: pull_request
 
 jobs:
-  build:
+  flake8:
+    name: Lint with flake8
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - run: |
+          pip install $(grep flake8 requirements-dev.txt)
+          flake8
 
+  mypy:
+    name: Check annotations with Mypy
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        platform: ["linux", "win32", "darwin"]
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - run: pip install mypy
+      - run: mypy
+
+  test:
+    name: Tests
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -18,12 +41,8 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
-        pip install -e .[dev]
-        pip install -r requirements-dev.txt
-    - name: Run flake8
-      run: |
-        flake8
+        python -m pip install -U pip
+        pip install aiohttp pytest-cov
     - name: Test with pytest
       run: |
         pytest -vv --cov=tesla_api --cov-report=xml

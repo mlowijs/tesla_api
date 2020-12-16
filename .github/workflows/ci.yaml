@@ -16,10 +16,6 @@ jobs:
   mypy:
     name: Check annotations with Mypy
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        platform: ["linux", "win32", "darwin"]
-      fail-fast: false
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2

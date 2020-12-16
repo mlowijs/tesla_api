@@ -4,8 +4,9 @@ from typing import Any, Iterable, List, Mapping, Optional, TYPE_CHECKING, cast
 from .charge import Charge
 from .climate import Climate
 from .controls import Controls
-from .datatypes import (CommandResponse, DriveStateResponse, GUISettingsResponse,
-                        VehicleDataResponse, VehicleState, VehicleStateResponse, VehiclesIdResponse)
+from .datatypes import (
+  CommandResponse, DriveStateResponse, GUISettingsResponse, VehicleDataResponse,
+  VehicleState, VehicleStateResponse, VehiclesIdResponse)
 from .exceptions import ApiError, VehicleUnavailableError
 
 if TYPE_CHECKING:
@@ -37,7 +38,8 @@ class Vehicle:
         self.climate = Climate(self)
         self.controls = Controls(self)
 
-    async def _command(self, command_endpoint: str, data: Optional[Mapping[str, object]] = None,  # noqa: C901
+    async def _command(self, command_endpoint: str,  # noqa: C901
+                       data: Optional[Mapping[str, object]] = None,
                        _retry: bool = True) -> None:
         """Handles vehicle commands with the common reason/result response.
 

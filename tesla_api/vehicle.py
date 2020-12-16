@@ -108,6 +108,7 @@ class Vehicle:
         Raises:
             VehicleUnavailableError: Timeout exceeded without success.
         """
+        delay: float
         if timeout is None:
             delay = 2
         else:

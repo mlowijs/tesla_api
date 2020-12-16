@@ -113,18 +113,19 @@ class TeslaApiClient:
             'Authorization': 'Bearer {}'.format(self._token['access_token'])
         }
 
-    async def get(self, endpoint: str) -> object:
-        return await self._send_request("get", endpoint)
+    async def get(self, endpoint: str, params: Optional[Mapping[str, str]] = None) -> object:
+        return await self._send_request("get", endpoint, params=params)
 
     async def post(self, endpoint: str, data: Optional[Mapping[str, object]] = None) -> object:
         return await self._send_request("post", endpoint, data=data)
 
     async def _send_request(self, method: Literal["get", "post"], endpoint: str, *,
-                            data: Optional[Mapping[str, object]] = None) -> object:
+                            data: Optional[Mapping[str, object]] = None,
+                            params: Optional[Mapping[str, str]] = None) -> object:
         await self.authenticate()
         url = "{}/{}".format(API_URL, endpoint)
 
-        async with self._session.request(method, url, headers=self._get_headers(), json=data) as resp:
+        async with self._session.request(method, url, headers=self._get_headers(), json=data, params=params) as resp:
             response_json = await cast(Coroutine[None, None, Union[BaseResponse, ErrorResponse]], resp.json())
 
         if "error" in response_json:

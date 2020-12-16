@@ -2,11 +2,10 @@
 
 def test_Vehicle_Battery_attributes(vehicle):
     battery = vehicle.battery
-    assert battery.estimated_range == 140.2
+    assert battery.estimated_range == 225.63
     assert battery.heater_on is False
-    assert battery.ideal_range == 185.92
-    assert battery.level == 60
+    assert battery.ideal_range == 299.21
     assert battery.not_enough_power_to_heat is False
-    assert battery.range == 185.92
+    assert battery.range == 299.21
     assert battery.soc == 60
-    assert battery.usable_level == 60
+    assert battery.usable_soc == 60

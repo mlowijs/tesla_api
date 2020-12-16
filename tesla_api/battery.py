@@ -5,35 +5,66 @@ from .misc import cast
 class Battery(Stub):
     @property
     def not_enough_power_to_heat(self) -> bool:
+        """The soc is to low use the heater.
+
+        Returns:
+            bool: Think this is if camping mode if on and power is less then 20%
+        """
         return cast(self._vehicle._data["charge_state"]["not_enough_power_to_heat"])
 
     @property
     def heater_on(self) -> bool:
+        """Check if the battery heater is on.
+
+        Returns:
+            bool: True if the heater is on
+        """
         return self._vehicle._data["charge_state"]["battery_heater_on"]
 
     @property
-    def level(self) -> int:
+    def soc(self) -> int:
+        """The returns how many percent that is left on the charge
+
+        Returns:
+            int: soc.
+        """
         return self._vehicle._data["charge_state"]["battery_level"]
 
     @property
-    def soc(self) -> int:
-        return self.level
+    def usable_soc(self) -> int:
+        """How many percent of soc is available for usage.
 
-    @property
-    def usable_level(self) -> int:
+        Returns:
+            int:
+        """
         return self._vehicle._data["charge_state"]["usable_battery_level"]
 
     @property
-    def range(self) -> int:
-        # What format
-        return self._vehicle._data["charge_state"]["battery_range"]
+    def range(self) -> float:
+        """Range in the distance unit used by the car
+
+        Returns:
+            float: How many miles/km you can drive before you have to call triple A
+        """
+        value = self._vehicle._data["charge_state"]["battery_range"]
+        return self._vehicle._format_distance_unit(value)
 
     @property
-    def estimated_range(self) -> int:
-        # What format
-        return self._vehicle._data["charge_state"]["est_battery_range"]
+    def estimated_range(self) -> float:
+        """Range in the distance unit used by the car
+
+        Returns:
+            float: How many miles/km you can drive before you have to call triple A
+        """
+        value = self._vehicle._data["charge_state"]["est_battery_range"]
+        return self._vehicle._format_distance_unit(value)
 
     @property
-    def ideal_range(self) -> int:
-        # What format
-        return self._vehicle._data["charge_state"]["ideal_battery_range"]
+    def ideal_range(self) -> float:
+        """Range in the distance unit used by the car
+
+        Returns:
+            float: How many miles/km you can drive before you have to call triple A
+        """
+        value = self._vehicle._data["charge_state"]["ideal_battery_range"]
+        return self._vehicle._format_distance_unit(value)

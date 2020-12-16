@@ -23,9 +23,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import asyncio
 from datetime import date, datetime, time
-from typing import cast, Any, Dict, Literal, Optional, Union, TYPE_CHECKING
+from typing import Any, Dict, Literal, Optional, TYPE_CHECKING, Union, cast
 
 from .datatypes import EnergySiteInfoResponse, EnergySiteLiveStatusResponse
 
@@ -98,7 +97,8 @@ class Energy:
             params["end_date"] = end_date
 
         endpoint = "energy_sites/{}/calendar_history".format(self._energy_site_id)
-        return cast(Dict[str, Any], await self._api_client.get(endpoint, params=params))  # type: ignore[misc]
+        return cast(Dict[str, Any],  # type: ignore[misc]
+                    await self._api_client.get(endpoint, params=params))
 
     async def get_energy_site_live_status(self) -> EnergySiteLiveStatusResponse:
         endpoint = "energy_sites/{}/live_status".format(self._energy_site_id)
@@ -116,7 +116,7 @@ class Energy:
     async def get_energy_site_live_status_total_pack_energy(self) -> int:
         status = await self.get_energy_site_live_status()
         return int(status["total_pack_energy"])
-    
+
     async def get_solar_power(self) -> int:
         status = await self.get_energy_site_live_status()
         return status["solar_power"]
@@ -137,7 +137,7 @@ class Energy:
     #   mode = 'autonomous' = "Advanced - Time-based control" on app
     # Note: setting 'backup' mode causes my Powerwall 2 to charge at 3.4kW
     async def set_operating_mode(
-        self, mode: Literal["self_consumption", "backup", "autonomous"]) -> bool:
+            self, mode: Literal["self_consumption", "backup", "autonomous"]) -> bool:
         endpoint = "energy_sites/{}/operation".format(self._energy_site_id)
         args = {"default_real_mode": mode}
         return cast(bool, await self._api_client.post(endpoint, args))

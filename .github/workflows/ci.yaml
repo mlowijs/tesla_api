@@ -10,7 +10,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
       - run: |
-          pip install $(grep flake8 requirements-dev.txt)
+          pip install -r requirements-flake8.txt
           flake8
 
   mypy:
@@ -23,7 +23,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
-      - run: pip install mypy
+      - run: pip install aiohttp mypy
       - run: mypy
 
   test:

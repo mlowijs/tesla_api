@@ -1,7 +1,6 @@
-import asyncio
 from enum import Enum
 from functools import partialmethod
-from typing import cast, Literal, TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
     from .vehicle import Vehicle

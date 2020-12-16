@@ -98,7 +98,7 @@ class Energy:
             params["end_date"] = end_date
 
         endpoint = "energy_sites/{}/calendar_history".format(self._energy_site_id)
-        return cast(Dict[str, Any], await self._api_client.get(endpoint, params=params))
+        return cast(Dict[str, Any], await self._api_client.get(endpoint, params=params))  # type: ignore[misc]
 
     async def get_energy_site_live_status(self) -> EnergySiteLiveStatusResponse:
         endpoint = "energy_sites/{}/live_status".format(self._energy_site_id)

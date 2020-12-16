@@ -129,7 +129,6 @@ class TeslaApiClient:
 
         if 'error' in response_json:
             error_response = cast(ErrorResponse, response_json)
-            print("TESLA_API:", error_response)
             error = error_response['error']
             if 'vehicle unavailable' in error:
                 raise VehicleUnavailableError()

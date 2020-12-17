@@ -2,8 +2,8 @@ import asyncio
 import json
 from datetime import datetime, timedelta
 from types import TracebackType
-from typing import (Awaitable, Callable, Coroutine, List, Literal, Mapping, Optional,
-                    Type, TypeVar, TypedDict, Union, cast)
+from typing import (Awaitable, Callable, List, Literal, Mapping, Optional, Type, TypeVar,
+                    TypedDict, Union, cast)
 
 import aiohttp
 
@@ -82,7 +82,7 @@ class TeslaApiClient:
         })
 
         async with self._session.post(TOKEN_URL, data=request_data) as resp:
-            response_json = await cast(Coroutine[None, None, TokenResponse], resp.json())
+            response_json = await cast(Awaitable[TokenResponse], resp.json())
             if resp.status == 401:
                 raise AuthenticationError(response_json)
 
@@ -133,8 +133,7 @@ class TeslaApiClient:
         async with self._session.request(method, url, headers=self._get_headers(),
                                          json=data, params=params) as resp:
             # TODO(Mypy): https://github.com/python/mypy/issues/8884
-            r = cast(Coroutine[None, None, Union[BaseResponse, ErrorResponse]], resp.json())
-            response_json = await r
+            response_json = await cast(Awaitable[Union[BaseResponse, ErrorResponse]], resp.json())
 
         if "error" in response_json:
             error_response = cast(ErrorResponse, response_json)

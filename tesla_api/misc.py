@@ -39,9 +39,7 @@ def cast(value: Optional[Union[str, int]]) -> bool:
     raise ValueError("%s expects value that can be bool")
 
 
-
-
-def diff(old: dict, new: dict, changes: str, fixup: bool):
+def diff(old: dict, new: dict, changes: str, fixup: bool) -> dict:
     """Helper to identify changes in json reponse. Print out a FULL_DATA dict that can be copy pasted in
 
     Args:

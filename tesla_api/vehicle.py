@@ -2,11 +2,9 @@
 import asyncio
 import json
 import logging
-from collections import defaultdict
-from datetime import datetime, timezone
+from datetime import datetime
 from typing import Optional, Union
 
-from .base import Stub
 from .battery import Battery
 from .charge import Charge
 from .climate import Climate

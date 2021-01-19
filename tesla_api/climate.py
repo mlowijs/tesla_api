@@ -16,6 +16,12 @@ class Climate:
     async def stop_climate(self):
         return await self._vehicle._command("auto_conditioning_stop")
 
+    async def start_preconditioning_max(self):
+        return await self._api_client.post('vehicles/{}/command/set_preconditioning_max'.format(self._vehicle_id),{'on':True})
+
+    async def stop_preconditioning_max(self):
+        return await self._api_client.post('vehicles/{}/command/set_preconditioning_max'.format(self._vehicle_id),{'on':False})
+
     async def set_temperature(self, driver_temperature, passenger_temperature=None):
         data = {"driver_temp": driver_temperature,
                 "passenger_temp": passenger_temperature or driver_temperature}

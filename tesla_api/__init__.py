@@ -58,8 +58,10 @@ class TeslaApiClient:
             await self.close()
 
     async def close(self):
-        # Only clean up the session if it was created by us.
-        if self._own_session is True:
+        """Close the session if it was created automatically,
+           if its passed as a argument they need to close it manually.
+        """
+        if self._own_session is False:
             await self._session.close()
             await asyncio.sleep(500)
 

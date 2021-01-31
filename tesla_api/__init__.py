@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 import aiohttp
 
 from .energy import Energy
-from .exceptions import ApiError, AuthenticationError, VehicleUnavailableError
+from .exceptions import ApiError, AuthenticationError, VehicleUnavailableError, JWTDecodeError
 from .vehicle import Vehicle
 
 TESLA_API_BASE_URL = "https://owner-api.teslamotors.com/"
@@ -32,6 +32,7 @@ class TeslaApiClient:
         For more information see:
         https://tesla-api.timdorr.com/api-basics/authentication#step-2-obtain-an-authorization-code
         and use the 'code' option to use this module.
+        This is currently not implemented and raises an exception.
 
         If token is not provided, or is no longer valid, then a new token will
         be fetched if a code (obtained from the tesla auth webpage) is available.
@@ -49,7 +50,7 @@ class TeslaApiClient:
         """
         if email or password:
             raise Exception("Email and Password logins currently not supported")
-        assert token is not None or code is not None
+        assert token is not None or code is not None or (email is not None and password is not None)
         self._short_lived_v3token = short_lived_v3token
         self._code = json.loads(code) if code else None
         self._token = json.loads(token) if token else None
@@ -66,10 +67,13 @@ class TeslaApiClient:
         await self._session.close()
 
     def decode_jwt_token(self, jwt_token):
-        headers_enc, payload_enc, verify_signature = jwt_token.split('.')
-        payload_enc += '=' * (-len(payload_enc) % 4)  # add padding
-        payload = json.loads(base64.b64decode(payload_enc).decode("utf-8"))
-        return payload
+        try:
+            headers_enc, payload_enc, verify_signature = jwt_token.split('.')
+            payload_enc += '=' * (-len(payload_enc) % 4)  # add padding
+            payload = json.loads(base64.b64decode(payload_enc).decode("utf-8"))
+            return payload
+        except:
+            raise JWTDecodeError()
 
     async def _get_token(self, url, data, headers={}):
         request_data = {
@@ -85,6 +89,10 @@ class TeslaApiClient:
             raise AuthenticationError(response_json)
         return response_json
 
+    async def _get_new_token_with_userpass(self):
+        #TODO ... do some HTML magic here
+        raise Exception('username / password token retrival not implemented yet')
+
     async def _get_new_token_with_code(self):
         request_data = {"grant_type": "authorization_code", "client_id": V3OAUTH_CLIENT_ID,
             "code": self._code["code"], "code_verifier": self._code["code_verifier"],
@@ -98,16 +106,24 @@ class TeslaApiClient:
         if self._short_lived_v3token:
             return v3_token_data
         request_data = {"grant_type": "urn:ietf:params:oauth:grant-type:jwt-bearer", "client_id": V2OAUTH_CLIENT_ID}
-        print(v3_token_data)
         return await self._get_token(V2TOKEN_URL, request_data, headers = {"Authorization": "Bearer {}".format(v3_token_data["access_token"])})
 
     async def authenticate(self):
         if not self._token:
-            self._token = await self._get_new_token_with_code()
+            if self._code: # First we check of if have a webcode to generate tokens
+                self._token = await self._get_new_token_with_code()
+            elif self._email: # Otherwise we try the user / password combo
+                self._token = await self._get_new_token_with_userpass()
+            else:
+                raise AuthenticationError('token or code or username/password missing')
 
         if "expires_at" not in self._token:
-            jwt_data = self.decode_jwt_token(self._token["access_token"])
-            self._token["expires_at"] = jwt_data["exp"]
+            try:
+                jwt_data = self.decode_jwt_token(self._token["access_token"])
+            except JWTDecodeError:
+                self._token["expires_at"] = self._token["created_at"] + self._token["expires_in"]
+            else:
+                self._token["expires_at"] = jwt_data["exp"]
         expiration_date = datetime.fromtimestamp(self._token["expires_at"])
 
         if datetime.utcnow() >= expiration_date:

@@ -111,7 +111,19 @@ class Energy:
 
     async def get_solar_power(self):
         status = await self.get_energy_site_live_status()
-        return int(status["solar_power"])
+        return int(status["solar_power"])    
+    
+    async def get_battery_value(self):
+        status = await self.get_energy_site_live_status()
+        return int(status["battery_power"])
+
+    async def get_home_usage(self):
+        status = await self.get_energy_site_live_status()
+        return int(status["load_power"])
+
+    async def get_grid_usage(self):
+        status = await self.get_energy_site_live_status()
+        return int(status["grid_power"])
 
     # Setting of the backup_reserve_percent used in self_consumption
     # (i.e. self-powered mode).

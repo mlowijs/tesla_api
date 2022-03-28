@@ -20,3 +20,9 @@ class Charge:
             raise ValueError("Percentage should be between 50 and 100")
 
         return await self._vehicle._command("set_charge_limit", {"percent": percentage})
+
+    async def set_charging_amps(self, amperage):
+        if not (5 <= amperage <= 40):
+            raise ValueError("Amerage should be between 5 and 40")
+
+        return await self._vehicle._command("set_charging_amps", {"charging_amps": amperage})

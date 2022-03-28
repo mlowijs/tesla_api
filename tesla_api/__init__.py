@@ -10,12 +10,10 @@ from .exceptions import ApiError, AuthenticationError, VehicleUnavailableError, 
 from .vehicle import Vehicle
 
 TESLA_API_BASE_URL = "https://owner-api.teslamotors.com/"
-V2TOKEN_URL = TESLA_API_BASE_URL + "oauth/token"
 V3TOKEN_URL = "https://auth.tesla.com/oauth2/v3/token"
 API_URL = TESLA_API_BASE_URL + "api/1"
 
 V3OAUTH_CLIENT_ID = "ownerapi"
-V2OAUTH_CLIENT_ID = "81527cff06843c8634fdc09e8ac0abefb46ac849f38fe1e431c2ef2106796384"
 OAUTH_CLIENT_SECRET = "c7257eb71a564034f9419ee651c7d0e5f7aa6bfbd18bafb5c5c033b093bb2fa3"
 
 
@@ -24,7 +22,7 @@ class TeslaApiClient:
     callback_wake_up = None  # Called when attempting to wake a vehicle.
     timeout = 30  # Default timeout for operations such as Vehicle.wake_up().
 
-    def __init__(self, email=None, password=None, code=None, token=None, short_lived_v3token=True, on_new_token=None):
+    def __init__(self, email=None, password=None, code=None, token=None, on_new_token=None, on_new_toke_args=None):
         """Creates client from provided credentials.
 
         Email and Password logins (with MFA support) require client side javascript
@@ -39,9 +37,10 @@ class TeslaApiClient:
         code consist of the itself + a code_verifier, e.g
         code = {'code': 'codedata', 'code_verifier': 'verification data'}
 
-        Per default we use short lived access tokens which need refreshing every
-        300 seconds. For long running sessions it is possible to use 'old v3 style'
-        access tokens. For this set short_lived_v3token to False
+        In March 2022 V2 long lived V2 token have finally be retired in favor of
+        the all new V3 tokens with extended access tokens being valid now for
+        8 hrs. At introduction of V3 they initially have only been valid for
+        300 seconds, too short for serious server applications.
 
         If on_new_token is provided, it will be called with the newly created token.
         This should be used to save the token, both after initial login and after an
@@ -51,7 +50,7 @@ class TeslaApiClient:
         if email or password:
             raise Exception("Email and Password logins currently not supported")
         assert token is not None or code is not None or (email is not None and password is not None)
-        self._short_lived_v3token = short_lived_v3token
+        self._on_new_toke_args = on_new_toke_args
         self._code = json.loads(code) if code else None
         self._token = json.loads(token) if token else None
         self._new_token_callback = on_new_token
@@ -103,12 +102,9 @@ class TeslaApiClient:
     async def _refresh_token(self, refresh_token):
         request_data = {"grant_type": "refresh_token", "refresh_token": refresh_token, "client_id": V3OAUTH_CLIENT_ID, "scope": "openid email offline_access"}
         v3_token_data = await self._get_token(V3TOKEN_URL, request_data)
-        if self._short_lived_v3token:
-            return v3_token_data
-        request_data = {"grant_type": "urn:ietf:params:oauth:grant-type:jwt-bearer", "client_id": V2OAUTH_CLIENT_ID}
-        return await self._get_token(V2TOKEN_URL, request_data, headers = {"Authorization": "Bearer {}".format(v3_token_data["access_token"])})
+        return v3_token_data
 
-    async def authenticate(self):
+    async def authenticate(self, force_refresh=False):
         if not self._token:
             if self._code: # First we check of if have a webcode to generate tokens
                 self._token = await self._get_new_token_with_code()
@@ -126,19 +122,17 @@ class TeslaApiClient:
                 self._token["expires_at"] = jwt_data["exp"]
         expiration_date = datetime.fromtimestamp(self._token["expires_at"])
 
-        if datetime.utcnow() >= expiration_date:
+        if datetime.utcnow() >= expiration_date or force_refresh:
             token_data = await self._refresh_token(self._token["refresh_token"])
-            # We need to distinguish between new v3 and old v2 style tokens here.
-            # v2 refresh tokens CAN NOT be used anymore for refresh they return an error in the Tesla API backend
-            if self._short_lived_v3token:
-                self._token = token_data
-            else:
-                self._token["access_token"] = token_data["access_token"]
-                self._token["expires_at"] = token_data["created_at"] + token_data["expires_in"]
+            self._token = token_data
 
             # Send token to application via callback.
             if self._new_token_callback:
-                asyncio.create_task(self._new_token_callback(json.dumps(self._token)))
+                token_jdump = json.dumps(self._token)
+                if self._on_new_toke_args:
+                    asyncio.create_task(self._new_token_callback(token_jdump, self._on_new_toke_args))
+                else:
+                    asyncio.create_task(self._new_token_callback(token_jdump))
 
     def _get_headers(self):
         return {"Authorization": "Bearer {}".format(self._token["access_token"])}
@@ -148,7 +142,13 @@ class TeslaApiClient:
         url = "{}/{}".format(API_URL, endpoint)
 
         async with self._session.get(url, headers=self._get_headers(), params=params) as resp:
-            response_json = await resp.json()
+            try:
+                response_json = await resp.json()
+            except aiohttp.client_exceptions.ContentTypeError as cte:
+                raise VehicleUnavailableError()
+
+        if response_json == None:
+           raise VehicleUnavailableError()
 
         if "error" in response_json:
             if "vehicle unavailable" in response_json["error"]:
@@ -162,7 +162,13 @@ class TeslaApiClient:
         url = "{}/{}".format(API_URL, endpoint)
 
         async with self._session.post(url, headers=self._get_headers(), json=data) as resp:
-            response_json = await resp.json()
+            try:
+                response_json = await resp.json()
+            except aiohttp.client_exceptions.ContentTypeError as cte:
+                raise VehicleUnavailableError()
+
+        if response_json == None:
+           raise VehicleUnavailableError()
 
         if "error" in response_json:
             if "vehicle unavailable" in response_json["error"]:

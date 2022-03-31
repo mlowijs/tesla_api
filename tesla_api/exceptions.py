@@ -12,3 +12,8 @@ class ApiError(Exception):
 class VehicleUnavailableError(Exception):
     def __init__(self):
         super().__init__("Vehicle failed to wake up.")
+
+
+class JWTDecodeError(Exception):
+    def __init__(self):
+        super().__init__("Unable to decode JWT")

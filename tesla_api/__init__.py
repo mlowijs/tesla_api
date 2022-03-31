@@ -22,7 +22,7 @@ class TeslaApiClient:
     callback_wake_up = None  # Called when attempting to wake a vehicle.
     timeout = 30  # Default timeout for operations such as Vehicle.wake_up().
 
-    def __init__(self, email=None, password=None, code=None, token=None, on_new_token=None, on_new_toke_args=None):
+    def __init__(self, email=None, password=None, code=None, token=None, on_new_token=None, on_new_toke_args=None, timeout_seconds=60):
         """Creates client from provided credentials.
 
         Email and Password logins (with MFA support) require client side javascript
@@ -54,7 +54,8 @@ class TeslaApiClient:
         self._code = json.loads(code) if code else None
         self._token = json.loads(token) if token else None
         self._new_token_callback = on_new_token
-        self._session = aiohttp.ClientSession()
+        session_timeout = aiohttp.ClientTimeout(total=None,sock_connect=timeout_seconds, sock_read=timeout_seconds)
+        self._session = aiohttp.ClientSession(timeout=session_timeout)
 
     async def __aenter__(self):
         return self
